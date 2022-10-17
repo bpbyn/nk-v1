@@ -1,14 +1,23 @@
 // import { Avatar } from '@chakra-ui/avatar';
 import { Flex, Heading } from '@chakra-ui/layout';
 // import { Menu, MenuItem, MenuList } from '@chakra-ui/menu';
-import { Link, Icon, Image } from '@chakra-ui/react';
+import {
+  Icon,
+  Image,
+  Text,
+  VStack,
+  Box,
+  useDisclosure,
+} from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { useState } from 'react';
 // import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
 import { FaCoffee, FaClipboardList, FaChartLine, FaCog } from 'react-icons/fa';
 
 interface LinkItemProps {
   name: string;
+  route: string;
   icon: IconType;
 }
 
@@ -16,22 +25,27 @@ interface LinkItemProps {
 
 const Navigation: React.FC = () => {
   const LinkItems: Array<LinkItemProps> = [
-    { name: 'Get Orders', icon: FaClipboardList },
-    { name: 'Queue', icon: FaCoffee },
-    { name: 'Analytics', icon: FaChartLine },
-    { name: 'Settings', icon: FaCog },
+    { name: 'Get Orders', route: '/order', icon: FaClipboardList },
+    { name: 'Queue', route: '/queue', icon: FaCoffee },
+    { name: 'Analytics', route: '/analytics', icon: FaChartLine },
+    { name: 'Settings', route: '/settings', icon: FaCog },
   ];
 
   // const router = useRouter();
   // const name = 'lorem.ipsum';
-  // const { isOpen, onOpen, onClose } = useDisclosure({
+  const { isOpen, onOpen } = useDisclosure();
+  const [nav, setNav] = useState(null);
   // defaultIsOpen: true
   // })
 
   return (
     <Flex flexDir="column" p="5" h="100%" alignItems="center" gap="10">
       <Flex flexDir="column" alignItems="center" justifyContent="center">
-        <Image src="assets/logo.png" boxSize={['0', '50px', '75px', '150px']} />
+        <Image
+          src="assets/logo.png"
+          boxSize={['0', '50px', '75px', '150px']}
+          alt="nk_logo"
+        />
         <Heading
           display={['none', 'none', 'none', 'block']}
           fontSize="xl"
@@ -56,52 +70,54 @@ const Navigation: React.FC = () => {
         justifyContent="center"
         w="100%"
       >
-        {LinkItems.map((link) => {
-          return (
-            <Flex
-              key={link.name}
-              gap="15px"
-              alignItems="flex-start"
-              justifyContent={{ base: 'center', xl: 'flex-start' }}
-              p={3}
-              w="100%"
-              // opacity="0.5"
-              _hover={{
-                bg: '#df85271a',
-                color: 'nk_black',
-                // opacity: "1",
-                borderRadius: '10px',
-                cursor: 'pointer',
-                transitionDuration: '.4s',
-                transitionTimingFunction: 'linear',
-              }}
-            >
-              <Icon
-                boxSize={[0, 8, 8, 5, 5]}
-                as={link.icon}
-                _hover={{
-                  color: 'nk_black',
-                }}
-              />
-              <Link
-                as={NextLink}
-                display={['none', 'none', 'none', 'block']}
-                fontSize="md"
-                fontWeight="bold"
-                // letterSpacing="1px"
-                href="/order"
-                _hover={{
-                  textDecoration: 'none',
-                }}
-              >
-                {/* <NextLink
-                        href="/order"> */}
-                {link.name}
-                {/* </NextLink> */}
-              </Link>
-            </Flex>
-          );
-        })}
+        <VStack spacing={4} align="stretch">
+          {LinkItems.map((link) => {
+            return (
+              <NextLink key={link.name} href={link.route}>
+                <Box
+                  as={Flex}
+                  align="flex-start"
+                  gap="15px"
+                  p={3}
+                  w="100%"
+                  onClick={() => {
+                    onOpen();
+                    setNav(link.name);
+                  }}
+                  color={{
+                    sm: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
+                    md: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
+                    lg: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
+                    xl: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
+                  }}
+                  bg={{
+                    sm: 'none',
+                    md: isOpen && nav === link.name && '#df85271a',
+                    lg: isOpen && nav === link.name && '#df85271a',
+                    xl: isOpen && nav === link.name && '#df85271a',
+                  }}
+                  borderRadius={10}
+                  _hover={{
+                    bg: '#df85271a',
+                    color: 'nk_black',
+                    cursor: 'pointer',
+                    transitionDuration: '.4s',
+                    transitionTimingFunction: 'linear',
+                  }}
+                >
+                  <Icon boxSize={[0, 7, 8, 5, 5]} as={link.icon} />
+                  <Text
+                    display={['none', 'none', 'none', 'block']}
+                    fontSize="md"
+                    fontWeight="bold"
+                  >
+                    {link.name}
+                  </Text>
+                </Box>
+              </NextLink>
+            );
+          })}
+        </VStack>
       </Flex>
     </Flex>
   );
