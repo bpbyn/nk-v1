@@ -1,4 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import '@fontsource/josefin-sans';
+import '@fontsource/vollkorn';
 import type { AppProps } from 'next/app';
 import React, { useRef } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';

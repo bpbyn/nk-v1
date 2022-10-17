@@ -10,12 +10,12 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, fullHeight }) => (
   <Grid
-    gridTemplateRows="auto 1fr"
+    gridTemplateColumns="15vw auto"
     h={fullHeight && '100vh'}
     overflowY={fullHeight ? 'hidden' : 'auto'}
   >
     <Navigation />
-    <Box as="main" overflowY="hidden">
+    <Box as="main" overflowY="hidden" bg="gray.50">
       {children}
     </Box>
   </Grid>
