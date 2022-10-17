@@ -47,7 +47,8 @@ const Navigation: React.FC = () => {
           alt="nk_logo"
         />
         <Heading
-          display={['none', 'none', 'none', 'block']}
+          // display={['none', 'none', 'none', 'block']}
+          display={{ base: 'none', lg: 'block' }}
           fontSize="xl"
           letterSpacing="3px"
           color="nk_black"
@@ -55,7 +56,7 @@ const Navigation: React.FC = () => {
           NORTHERN
         </Heading>
         <Heading
-          display={['none', 'none', 'none', 'block']}
+          display={{ base: 'none', lg: 'block' }}
           fontSize="lg"
           letterSpacing="3px"
           color="nk_orange"
@@ -84,17 +85,12 @@ const Navigation: React.FC = () => {
                     onOpen();
                     setNav(link.name);
                   }}
-                  color={{
-                    sm: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
-                    md: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
-                    lg: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
-                    xl: isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30',
-                  }}
+                  color={
+                    isOpen && nav === link.name ? 'nk_black' : 'nk_gray.30'
+                  }
                   bg={{
-                    sm: 'none',
-                    md: isOpen && nav === link.name && '#df85271a',
-                    lg: isOpen && nav === link.name && '#df85271a',
-                    xl: isOpen && nav === link.name && '#df85271a',
+                    base: 'none',
+                    sm: nav === link.name && '#df85271a',
                   }}
                   borderRadius={10}
                   _hover={{
@@ -105,7 +101,7 @@ const Navigation: React.FC = () => {
                     transitionTimingFunction: 'linear',
                   }}
                 >
-                  <Icon boxSize={[0, 7, 8, 5, 5]} as={link.icon} />
+                  <Icon boxSize={[0, 7, 8, 5]} as={link.icon} />
                   <Text
                     display={['none', 'none', 'none', 'block']}
                     fontSize="md"

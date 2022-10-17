@@ -6,6 +6,9 @@ const theme = extendTheme({
       html: {
         height: '100vh',
       },
+      body: {
+        color: 'nk_black',
+      },
     },
   },
   fonts: {
