@@ -24,6 +24,7 @@
     "firebase": "^9.12.1",
     "framer-motion": "^7.3.2",
     "joi": "^17.6.0",
+    "moment": "^2.29.4",
     "next": "^12.1.6",
     "next-connect": "^0.13.0",
     "next-seo": "^5.4.0",

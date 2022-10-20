@@ -1,53 +1,83 @@
 import { Box, Heading } from '@chakra-ui/react';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 
 import OrderCards from '../components/OrderCards';
 import Layout from '../layouts/Layout';
 import { db } from '../lib/api/firebase';
+import { getDocuments, updateOrderStatus } from '../lib/api/service';
+import { OrderDetails } from '../types';
+import { sortOrders } from '../utils';
 import type { NextPageWithLayout } from './_app';
-
-export interface OrderDetails {
-  name: string;
-  orderId: string;
-  status: string;
-  order: string[];
-  total: number;
-  date?: Date;
-}
 
 const Queue: NextPageWithLayout = () => {
   const [customerOrders, setCustomerOrders] = useState(null);
+  const [menu, setMenu] = useState(null);
 
   useEffect(() => {
-    const q = query(collection(db, 'orders'));
+    const orderCollectionRef = collection(db, 'orders');
+    const startDay = moment().startOf('day').valueOf();
 
+    const q = query(orderCollectionRef, where('orderTimestamp', '>', startDay));
     const unsubscribe = onSnapshot(q, (qSnapshots) => {
-      const fetchedOrders = qSnapshots.docs.map((doc) => {
-        const initDoc = doc.data();
-        const completeDoc = {
+      let fetchedOrders: OrderDetails[] = [];
+      fetchedOrders = qSnapshots.docs.map((doc) => {
+        const completeDoc: OrderDetails = {
           id: doc.id,
-          ...initDoc,
+          customerName: doc.data().customerName,
+          orderId: doc.data().orderId,
+          orderStatus: doc.data().orderStatus,
+          orderedProducts: doc.data().orderedProducts,
+          orderTimestamp: doc.data().orderTimestamp,
         };
         return completeDoc;
       });
+
+      fetchedOrders = sortOrders(fetchedOrders);
+      fetchedOrders = fetchedOrders.filter((x) => x.orderStatus === 'pending');
+
       setCustomerOrders(fetchedOrders);
     });
 
     return () => unsubscribe();
   }, []);
 
-  return (
-    // <Flex w="100%" flexDir="column" h="100%">
-    <Box p={10}>
-      <Heading fontFamily="body" letterSpacing={5} my={5}>
-        NEW ORDERS
-      </Heading>
-      {customerOrders && <OrderCards orders={customerOrders} />}
-    </Box>
+  useEffect(() => {
+    getDocuments('menu').then((documents) => setMenu(documents));
+  }, []);
 
-    // </Flex>
+  const handleCompleteTask = (order: OrderDetails) => {
+    updateOrderStatus('orders', order.id).then(() => {
+      // eslint-disable-next-line no-console
+      console.log('update completed');
+    });
+  };
+
+  return (
+    <Box
+      p={{ base: '5', lg: '10' }}
+      // as={Flex}
+      // flexDir="column"
+      // // justify="space-between"
+      // // alignContent="space-between"
+      // gap={20}
+      // h="100%"
+    >
+      <Box>
+        <Heading fontFamily="body" letterSpacing={5} my={5}>
+          NEW ORDERS
+        </Heading>
+        {customerOrders && (
+          <OrderCards
+            customerOrders={customerOrders}
+            menu={menu}
+            handleCompleteTask={handleCompleteTask}
+          />
+        )}
+      </Box>
+    </Box>
   );
 };
 
