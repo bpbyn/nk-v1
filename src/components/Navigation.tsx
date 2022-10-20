@@ -25,7 +25,7 @@ interface LinkItemProps {
 
 const Navigation: React.FC = () => {
   const LinkItems: Array<LinkItemProps> = [
-    { name: 'Get Orders', route: '/order', icon: FaClipboardList },
+    { name: 'My Orders', route: '/order', icon: FaClipboardList },
     { name: 'Queue', route: '/queue', icon: FaCoffee },
     { name: 'Analytics', route: '/analytics', icon: FaChartLine },
     { name: 'Settings', route: '/settings', icon: FaCog },
@@ -39,15 +39,23 @@ const Navigation: React.FC = () => {
   // })
 
   return (
-    <Flex flexDir="column" p="5" h="100%" alignItems="center" gap="10">
+    <Flex
+      flexDir="column"
+      p="5"
+      h="100%"
+      alignItems="center"
+      gap="10"
+      display={{ base: 'none', sm: 'flex' }}
+    >
       <Flex flexDir="column" alignItems="center" justifyContent="center">
         <Image
           src="assets/logo.png"
           boxSize={['0', '50px', '75px', '150px']}
+          minW={50}
+          minH={50}
           alt="nk_logo"
         />
         <Heading
-          // display={['none', 'none', 'none', 'block']}
           display={{ base: 'none', lg: 'block' }}
           fontSize="xl"
           letterSpacing="3px"

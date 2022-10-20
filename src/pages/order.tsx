@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
+import moment from 'moment';
 import React from 'react';
 
 import Layout from '../layouts/Layout';
@@ -10,12 +11,30 @@ import type { NextPageWithLayout } from './_app';
 
 const addData = async () => {
   await addDoc(collection(db, 'orders'), {
-    name: 'Test5',
+    customerName: 'ZEZE',
     orderId: generateOrderId(),
-    status: 'pending',
-    order: ['BC-M', 'BC-M'],
-    total: 12,
-    date: Timestamp.now().seconds * 1000,
+    orderStatus: 'pending',
+    orderedProducts: [
+      {
+        productName: 'CARAMEL_MACCHIATO',
+        productSize: 'REGULAR',
+        productCount: 1,
+        productCost: 70,
+      },
+      {
+        productName: 'BUTTERSCOTCH_LATTE',
+        productSize: 'REGULAR',
+        productCount: 2,
+        productCost: 140,
+      },
+      {
+        productName: 'BUTTERSCOTCH_LATTE',
+        productSize: 'REGULAR',
+        productCount: 2,
+        productCost: 140,
+      },
+    ],
+    orderTimestamp: moment().valueOf(),
   });
 };
 
