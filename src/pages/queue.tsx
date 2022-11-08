@@ -4,6 +4,7 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 
+import LoadingSpinner from '../components/LoadingSpinner';
 import OrderCards from '../components/OrderCards';
 import Layout from '../layouts/Layout';
 import { db } from '../lib/api/firebase';
@@ -56,25 +57,19 @@ const Queue: NextPageWithLayout = () => {
   };
 
   return (
-    <Box
-      p={{ base: '5', lg: '10' }}
-      // as={Flex}
-      // flexDir="column"
-      // // justify="space-between"
-      // // alignContent="space-between"
-      // gap={20}
-      // h="100%"
-    >
+    <Box p={{ base: '5', lg: '10' }}>
       <Box>
         <Heading fontFamily="body" letterSpacing={5} my={5}>
           NEW ORDERS
         </Heading>
-        {customerOrders && (
+        {customerOrders ? (
           <OrderCards
             customerOrders={customerOrders}
             menu={menu}
             handleCompleteTask={handleCompleteTask}
           />
+        ) : (
+          <LoadingSpinner />
         )}
       </Box>
     </Box>

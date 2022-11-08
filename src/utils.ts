@@ -13,3 +13,10 @@ export const getPrettyName = (id: string, menu: MenuDetails[]): string => {
 export const sortOrders = (data: OrderDetails[]) => {
   return data.sort((a, b) => a.orderTimestamp - b.orderTimestamp);
 };
+
+export const filterMenu = (menu: MenuDetails[], product: string) =>
+  menu.filter((x) => x.type === product);
+
+export const formatPrice = (price: number) => {
+  return isNaN(price) ? `₱ 0` : `₱ ${price}`;
+};

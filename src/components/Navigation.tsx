@@ -50,7 +50,7 @@ const Navigation: React.FC = () => {
       <Flex flexDir="column" alignItems="center" justifyContent="center">
         <Image
           src="assets/logo.png"
-          boxSize={['0', '50px', '75px', '150px']}
+          boxSize={['0', '50px', '75px', '100px']}
           minW={50}
           minH={50}
           alt="nk_logo"
