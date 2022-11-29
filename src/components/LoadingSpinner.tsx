@@ -1,8 +1,8 @@
-import { Center, Spinner } from '@chakra-ui/react';
+import { Center, Flex, Spinner } from '@chakra-ui/react';
 
 const LoadingSpinner: React.FC = () => {
   return (
-    <Center position="fixed" bottom="50%" left="50%">
+    <Center as={Flex} align="center" h="full">
       <Spinner
         thickness="4px"
         speed="0.65s"

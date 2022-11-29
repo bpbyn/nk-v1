@@ -5,11 +5,17 @@ import { MenuDetails } from '../types';
 interface RadioCardsProps {
   menu: MenuDetails;
   onChange: (size: string | number, id: string, category: string) => void;
+  initialValue: string;
 }
 
-const RadioCards: React.FC<RadioCardsProps> = ({ menu, onChange }) => {
+const RadioCards: React.FC<RadioCardsProps> = ({
+  menu,
+  onChange,
+  initialValue,
+}) => {
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: `${menu.id}`,
+    value: initialValue,
     onChange: (e) => onChange(e, menu.id, 'size'),
   });
 

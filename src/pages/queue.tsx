@@ -1,4 +1,4 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import moment from 'moment';
@@ -9,7 +9,7 @@ import OrderCards from '../components/OrderCards';
 import Layout from '../layouts/Layout';
 import { db } from '../lib/api/firebase';
 import { getDocuments, updateOrderStatus } from '../lib/api/service';
-import { OrderDetails } from '../types';
+import { OrderDetails, OrderStatus } from '../types';
 import { sortOrders } from '../utils';
 import type { NextPageWithLayout } from './_app';
 
@@ -30,6 +30,7 @@ const Queue: NextPageWithLayout = () => {
           customerName: doc.data().customerName,
           orderId: doc.data().orderId,
           orderStatus: doc.data().orderStatus,
+          orderNotes: doc.data().orderNotes,
           orderedProducts: doc.data().orderedProducts,
           orderTimestamp: doc.data().orderTimestamp,
         };
@@ -37,7 +38,9 @@ const Queue: NextPageWithLayout = () => {
       });
 
       fetchedOrders = sortOrders(fetchedOrders);
-      fetchedOrders = fetchedOrders.filter((x) => x.orderStatus === 'pending');
+      fetchedOrders = fetchedOrders.filter(
+        (x) => x.orderStatus === OrderStatus.PENDING
+      );
 
       setCustomerOrders(fetchedOrders);
     });
@@ -58,20 +61,47 @@ const Queue: NextPageWithLayout = () => {
 
   return (
     <Box p={{ base: '5', lg: '10' }}>
-      <Box>
-        <Heading fontFamily="body" letterSpacing={5} my={5}>
-          NEW ORDERS
-        </Heading>
-        {customerOrders ? (
-          <OrderCards
-            customerOrders={customerOrders}
-            menu={menu}
-            handleCompleteTask={handleCompleteTask}
+      <Heading
+        fontFamily="body"
+        letterSpacing={5}
+        my={5}
+        textAlign={{ base: 'center', sm: 'left' }}
+      >
+        NEW ORDERS
+      </Heading>
+      {customerOrders?.length > 0 ? (
+        <Box>
+          {customerOrders ? (
+            <OrderCards
+              customerOrders={customerOrders}
+              menu={menu}
+              handleCompleteTask={handleCompleteTask}
+            />
+          ) : (
+            <LoadingSpinner />
+          )}
+        </Box>
+      ) : (
+        <Box
+          as={Flex}
+          flexFlow="column wrap"
+          justify="start"
+          mt={20}
+          alignItems="center"
+          h="full"
+        >
+          <Image
+            src="assets/no_data.svg"
+            alt="no_data"
+            boxSize="200px"
+            background="nk_gray.20"
+            borderRadius="full"
           />
-        ) : (
-          <LoadingSpinner />
-        )}
-      </Box>
+          <Text color="nk_gray.30" p={5}>
+            No Data Available
+          </Text>
+        </Box>
+      )}
     </Box>
   );
 };
@@ -79,5 +109,5 @@ const Queue: NextPageWithLayout = () => {
 export default Queue;
 
 Queue.getLayout = (page: ReactJSXElement) => {
-  return <Layout fullHeight>{page}</Layout>;
+  return <Layout fullHeight={true}>{page}</Layout>;
 };

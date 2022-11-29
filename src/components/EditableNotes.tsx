@@ -11,19 +11,20 @@ import {
 import React from 'react';
 
 interface EditableProps {
-  id?: string;
-  onChange?: (note: string, id: string, category: string) => void;
+  onChange: (category: string, note: string) => void;
+  value: string;
 }
 
-const EditableNotes: React.FC<EditableProps> = ({ id, onChange }) => {
+const EditableNotes: React.FC<EditableProps> = ({ onChange, value }) => {
   return (
     <Editable
       placeholder="Customer name"
       fontSize={{ base: 'lg', md: 'xl' }}
       isPreviewFocusable={true}
       selectAllOnFocus={false}
-      startWithEditView={true}
-      onSubmit={(e) => onChange(e, id, 'notes')}
+      startWithEditView={value ? false : true}
+      defaultValue={value}
+      onSubmit={(e) => onChange('customerName', e)}
       w="80%"
       display="flex"
     >
@@ -37,6 +38,7 @@ const EditableNotes: React.FC<EditableProps> = ({ id, onChange }) => {
         as={EditableInput}
         variant="flushed"
         fontSize={{ base: 'md', md: 'lg' }}
+        // onChange={(e) => setValue(e)}
         focusBorderColor="orange.500"
         _focusVisible={{
           boxShadow: 'none',

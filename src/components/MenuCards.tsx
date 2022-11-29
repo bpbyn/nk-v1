@@ -7,9 +7,10 @@ import {
   Image,
   SimpleGrid,
   Tag,
+  Text,
   VStack,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 
 import { OrderMenuProps } from '../types';
@@ -20,21 +21,17 @@ import RadioCards from './RadioCards';
 const MenuCards: React.FC<OrderMenuProps> = ({
   menu,
   sendSelectedOrderToCart,
+  clearMenuCards,
+  clearCart,
 }) => {
   const [listOfOrders, setListOfOrders] = useState({});
-  // const [selectedOrdersToCart, setSelectedOrdersToCart] = useState({});
 
-  // useEffect(() => {
-  //   console.log('dumaan dito');
-  //   const initialOrders = {};
-  //   menu.forEach((item) => {
-  //     initialOrders[item.id] = {
-  //       size: '',
-  //       quantity: 0,
-  //     };
-  //   });
-  //   setListOfOrders(initialOrders);
-  // }, [menu]);
+  useEffect(() => {
+    if (clearMenuCards) {
+      setListOfOrders({});
+      clearCart();
+    }
+  }, [clearCart, clearMenuCards]);
 
   const handleMenuChange = (value: any, id: string, category: string) => {
     setListOfOrders({
@@ -46,7 +43,7 @@ const MenuCards: React.FC<OrderMenuProps> = ({
     });
   };
 
-  return (
+  return menu.length > 0 ? (
     <SimpleGrid minChildWidth="300px" spacing="40px">
       {menu.map((item) => (
         <Box
@@ -58,7 +55,7 @@ const MenuCards: React.FC<OrderMenuProps> = ({
         >
           <Flex h="100%">
             <Box w="200px">
-              <VStack p={5} h="100%" as={Flex} justify="space-evenly">
+              <VStack p={5} h="100%" as={Flex} justify="space-evenly" gap={2}>
                 <Image
                   borderRadius={15}
                   alt="Coffee"
@@ -68,11 +65,11 @@ const MenuCards: React.FC<OrderMenuProps> = ({
                 <MenuNumberInput
                   onChange={handleMenuChange}
                   id={item.id}
-                  initialValue={0}
+                  initialValue={listOfOrders[item.id]?.quantity ?? 0}
                 />
               </VStack>
             </Box>
-            <Box>
+            <Box w={{ base: '180px', md: 'unset' }}>
               <Flex
                 direction="column"
                 justify="space-evenly"
@@ -82,9 +79,14 @@ const MenuCards: React.FC<OrderMenuProps> = ({
                 py={5}
                 pr={5}
               >
-                <Heading size="md">{item.prettyName}</Heading>
-                <RadioCards menu={item} onChange={handleMenuChange} />
-                {/* <EditableNotes id={item.id} onChange={handleMenuChange} /> */}
+                <Heading size="md" textAlign={{ base: 'center', md: 'unset' }}>
+                  {item.prettyName}
+                </Heading>
+                <RadioCards
+                  menu={item}
+                  onChange={handleMenuChange}
+                  initialValue={listOfOrders[item.id]?.size ?? ''}
+                />
                 <HStack align="stretch" w="100%">
                   <Tag
                     size="md"
@@ -133,6 +135,26 @@ const MenuCards: React.FC<OrderMenuProps> = ({
         </Box>
       ))}
     </SimpleGrid>
+  ) : (
+    <Box
+      as={Flex}
+      flexFlow="column wrap"
+      justify="start"
+      mt={20}
+      alignItems="center"
+      h="full"
+    >
+      <Image
+        src="assets/no_data.svg"
+        alt="no_data"
+        boxSize="200px"
+        background="nk_gray.20"
+        borderRadius="full"
+      />
+      <Text color="nk_gray.30" p={5}>
+        No Data Available
+      </Text>
+    </Box>
   );
 };
 

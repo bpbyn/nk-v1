@@ -1,10 +1,11 @@
 export interface OrderDetails {
-  id: string;
+  id?: string;
   customerName: string;
   orderId: string;
   orderStatus: string;
   orderedProducts: ProductDetails[];
   orderTimestamp: number;
+  orderNotes: string;
 }
 
 export interface ProductDetails {
@@ -21,9 +22,14 @@ export interface MenuDetails {
   type: string;
 }
 
-export interface OrderDetails {
+export interface SelectedOrderDetails {
   quantity: number;
   size: string;
+}
+
+export interface CounterDetails {
+  date: number;
+  queueCount: number;
 }
 
 export interface ProductSize {
@@ -31,8 +37,21 @@ export interface ProductSize {
   REGULAR: number;
 }
 
+export enum OrderStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+}
+
 export interface OrderMenuProps {
   menu: MenuDetails[];
-  sendSelectedOrderToCart?: (id: string, order: OrderDetails) => void;
-  cart?: any;
+  sendSelectedOrderToCart?: (
+    id: string,
+    order: Partial<SelectedOrderDetails>
+  ) => void;
+  removeSelectedOrderToCart?: (id: string) => void;
+  sendUpdatedValueToCart?: (category: string, value: string) => void;
+  clearCart?: () => void;
+  clearMenuCards?: boolean;
+  cart?: OrderDetails;
+  counter?: CounterDetails;
 }

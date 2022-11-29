@@ -3,6 +3,7 @@ import React from 'react';
 
 const MenuNumberInput = ({ onChange, id, initialValue }) => {
   const [value, setValue] = useControllableState({
+    value: initialValue,
     defaultValue: initialValue,
     shouldUpdate: (prev, next) => {
       if (next >= 0) {
@@ -15,7 +16,7 @@ const MenuNumberInput = ({ onChange, id, initialValue }) => {
   });
 
   return (
-    <HStack maxW="320px" pt={2}>
+    <HStack maxW="320px">
       <Button
         size="xs"
         variant="outline"
