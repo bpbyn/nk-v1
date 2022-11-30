@@ -36,7 +36,7 @@ const QFormControl: React.FC<QFormControlProps> = ({
       {label && <FormLabel>{label}</FormLabel>}
       {render ? render(register(name)) : childrenWithProps}
       {errors[name]?.message && !hideErrorMessage ? (
-        <FormErrorMessage>{errors[name]?.message}</FormErrorMessage>
+        <FormErrorMessage>{}</FormErrorMessage>
       ) : null}
     </FormControl>
   );

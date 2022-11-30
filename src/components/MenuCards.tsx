@@ -69,11 +69,11 @@ const MenuCards: React.FC<OrderMenuProps> = ({
                 />
               </VStack>
             </Box>
-            <Box w={{ base: '180px', md: 'unset' }}>
+            <Box w={{ base: '190px', md: 'unset' }}>
               <Flex
                 direction="column"
                 justify="space-evenly"
-                align="start"
+                align="center"
                 gap={3}
                 h="100%"
                 py={5}
