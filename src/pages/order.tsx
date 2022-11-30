@@ -34,7 +34,11 @@ const Order: NextPageWithLayout = () => {
   const [counter, setCounter] = useState(null);
 
   useEffect(() => {
-    getDocuments('menu').then((documents) => setMenu(documents));
+    getDocuments('menu').then((documents) =>
+      setMenu(
+        documents.sort((a, b) => a.prettyName.localeCompare(b.prettyName))
+      )
+    );
   }, []);
 
   useEffect(() => {
