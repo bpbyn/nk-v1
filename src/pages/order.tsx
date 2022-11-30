@@ -48,16 +48,18 @@ const Order: NextPageWithLayout = () => {
   }, []);
 
   const handleOrderFromMenu = (id: string, order: SelectedOrderDetails) => {
-    const product = cart.orderedProducts.find((x) => x.productName === id);
+    const productFound = cart.orderedProducts.find(
+      (x) => x.productName === id && x.productSize === order.size
+    );
 
     const present = cart.orderedProducts.some((prod) => {
-      return prod.productName === id;
+      return prod.productName === id && prod.productSize === order.size;
     });
 
     const currentProductDetails: ProductDetails = {
       productName: id,
       productSize: order.size,
-      productCount: order.quantity + (product?.productCount ?? 0),
+      productCount: order.quantity + (productFound?.productCount ?? 0),
       productCost: getMenuPrice(id, order.size, menu) * order.quantity,
     };
 
@@ -70,24 +72,37 @@ const Order: NextPageWithLayout = () => {
         ],
       }));
     } else {
-      setSelectedOrdersToCart((prevState) => ({
-        ...prevState,
-        orderedProducts: [
-          ...prevState.orderedProducts.map((product) => {
-            if (product.productName === id) {
-              product.productCount =
+      if (productFound?.productSize !== order.size) {
+        setSelectedOrdersToCart((prevState) => ({
+          ...prevState,
+          orderedProducts: [
+            ...prevState.orderedProducts,
+            { ...currentProductDetails, productCount: order.quantity },
+          ],
+        }));
+      } else {
+        setSelectedOrdersToCart((prevState) => ({
+          ...prevState,
+          orderedProducts: [
+            ...prevState.orderedProducts.map((product) => {
+              if (
+                product.productName === id &&
                 product.productSize === order.size
-                  ? product.productCount + order.quantity
-                  : order.quantity;
-              product.productCost =
-                getMenuPrice(id, order.size, menu) * product.productCount;
-              product.productSize = order.size;
+              ) {
+                product.productCount =
+                  product.productSize === order.size
+                    ? product.productCount + order.quantity
+                    : order.quantity;
+                product.productCost =
+                  getMenuPrice(id, order.size, menu) * product.productCount;
+                product.productSize = order.size;
+                return product;
+              }
               return product;
-            }
-            return product;
-          }),
-        ],
-      }));
+            }),
+          ],
+        }));
+      }
     }
   };
 
