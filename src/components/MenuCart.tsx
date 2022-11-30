@@ -187,8 +187,8 @@ const MenuCart: React.FC<OrderMenuProps> = ({
               pr={8}
               pt={4}
             >
-              {cart.orderedProducts.map((order: ProductDetails) => (
-                <Box key={order.productName} position="relative">
+              {cart.orderedProducts.map((order: ProductDetails, i) => (
+                <Box key={`${order.productName}-${i}`} position="relative">
                   <Button
                     size="xs"
                     fontSize="lg"
