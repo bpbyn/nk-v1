@@ -1,5 +1,16 @@
-import { collection, doc, getDocs, query, updateDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+} from 'firebase/firestore';
+import moment from 'moment';
 
+import { OrderDetails, OrderStatus } from '../../types';
+import { pad } from '../../utils';
 import { db } from './firebase';
 
 export const getDocuments = async (collectionName: string) => {
@@ -8,18 +19,57 @@ export const getDocuments = async (collectionName: string) => {
   const documents = [];
 
   docSnapshots.forEach((doc) => {
-    // eslint-disable-next-line no-console
-    // console.log(doc.data());
     documents.push(doc.data());
   });
 
   return documents;
 };
 
+export const getDocument = async (collection, documentId: string) => {
+  const documentRef = doc(db, collection, documentId);
+
+  return await getDoc(documentRef);
+};
+
 export const updateOrderStatus = async (collection, documentId: string) => {
   const documentRef = doc(db, collection, documentId);
 
   return await updateDoc(documentRef, {
-    orderStatus: 'completed',
+    orderStatus: OrderStatus.COMPLETED,
+  });
+};
+
+export const updateCounter = async (counterValue: number) => {
+  const documentRef = doc(db, 'counter', 'queue');
+
+  return await updateDoc(documentRef, {
+    date: moment().valueOf(),
+    queueCount: counterValue,
+  });
+};
+
+export const addOrder = async (orderDetails: OrderDetails) => {
+  return new Promise((resolve, reject) => {
+    try {
+      getDocument('counter', 'queue').then(async (counter) => {
+        const newCount = counter.data().queueCount + 1;
+
+        const order: OrderDetails = {
+          ...orderDetails,
+          orderId: 'PO-' + pad(newCount),
+          orderStatus: OrderStatus.PENDING,
+          orderTimestamp: moment().valueOf(),
+        };
+
+        await updateCounter(newCount);
+        await addDoc(collection(db, 'orders'), order);
+
+        resolve(order);
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('Place order failed');
+      reject();
+    }
   });
 };
