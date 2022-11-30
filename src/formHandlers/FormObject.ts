@@ -1,6 +1,6 @@
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi, { AnySchema } from 'joi';
-import { DeepPartial, UnpackNestedValue, UseFormProps } from 'react-hook-form';
+import { UseFormProps } from 'react-hook-form';
 
 type FormSchema<T> = Partial<Record<keyof T, AnySchema>>;
 
@@ -26,9 +26,9 @@ export class FormObject<FormData> {
   getHookOptions(): UseFormProps<FormData> {
     return {
       ...this.defaultFormOptions,
-      defaultValues: this.defaultValues as UnpackNestedValue<
-        DeepPartial<FormData>
-      >,
+      // defaultValues: this.defaultValues as UnpackNestedValue<
+      //   DeepPartial<FormData>
+      // >,
       resolver: joiResolver(Joi.object(this.schema), {
         ...this.defaultResolverOptions,
         ...this.options?.resolver,
