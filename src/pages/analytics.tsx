@@ -23,7 +23,7 @@ const Analytics: NextPageWithLayout = () => {
         borderRadius="full"
       />
       <Text color="nk_gray.30" p={5}>
-        Work in Progress
+        Work in Progress 🤔
       </Text>
     </Box>
   );

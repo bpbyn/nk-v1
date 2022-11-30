@@ -34,6 +34,7 @@ import {
   getPrettyName,
   getProductPrice,
   isValidDate,
+  toastUtil,
 } from '../utils';
 import EditableNotes from './EditableNotes';
 import MenuNumberInput from './MenuNumberInput';
@@ -54,33 +55,36 @@ const MenuCart: React.FC<OrderMenuProps> = ({
   const toast = useToast();
 
   const processOrder = (orderDetails: OrderDetails) => {
+    setOrderNotes('');
     setOrderLoader(true);
     if (isValidDate(counter.date)) {
       // do update transaction
-      addOrder(orderDetails).then(() => {
-        setOrderLoader(false);
-        clearCart();
-        onClose();
-        toast({
-          title: 'Order has been placed.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
+      addOrder(orderDetails)
+        .then((order: OrderDetails) => {
+          setOrderLoader(false);
+          clearCart();
+          onClose();
+          toast(
+            toastUtil(`Order (${order.orderId}) has been placed.`, 'success')
+          );
+        })
+        .catch(() => {
+          toast(toastUtil(`Failed to place order.`, 'error'));
         });
-      });
     } else {
       updateCounter(0);
-      addOrder(orderDetails).then(() => {
-        setOrderLoader(false);
-        clearCart();
-        onClose();
-      });
-      toast({
-        title: 'Order has been placed.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      addOrder(orderDetails)
+        .then((order: OrderDetails) => {
+          setOrderLoader(false);
+          clearCart();
+          onClose();
+          toast(
+            toastUtil(`Order (${order.orderId}) has been placed.`, 'success')
+          );
+        })
+        .catch(() => {
+          toast(toastUtil(`Failed to place order.`, 'error'));
+        });
     }
   };
 
@@ -174,16 +178,6 @@ const MenuCart: React.FC<OrderMenuProps> = ({
                 value={cart.customerName}
               />
               <Box></Box>
-              {/* <Tag
-                pt={0.5}
-                color="white"
-                bg="nk_orange"
-                size={{ base: 'md', lg: 'lg' }}
-                boxShadow="md"
-              >
-                <b>PO-456</b>
-              </Tag> */}
-              {/* <Tag size="lg">{moment().format('MM.DD.YYYY')}</Tag> */}
             </Flex>
             <VStack
               spacing={4}

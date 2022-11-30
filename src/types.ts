@@ -39,6 +39,7 @@ export interface ProductSize {
 
 export enum OrderStatus {
   PENDING = 'pending',
+  LOADING = 'loading',
   COMPLETED = 'completed',
 }
 

@@ -152,7 +152,7 @@ const MenuCards: React.FC<OrderMenuProps> = ({
         borderRadius="full"
       />
       <Text color="nk_gray.30" p={5}>
-        No Data Available
+        Coming Soon! 😉
       </Text>
     </Box>
   );

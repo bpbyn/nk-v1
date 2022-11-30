@@ -1,3 +1,4 @@
+import { UseToastOptions } from '@chakra-ui/react';
 import moment from 'moment';
 
 import { MenuDetails, OrderDetails } from './types';
@@ -51,4 +52,16 @@ export const getMenuPrice = (
 ): number => {
   const product = menu.find((product: MenuDetails) => product.id === id);
   return product.price[size];
+};
+
+export const toastUtil = (title: string, status: UseToastOptions['status']) => {
+  return {
+    title: title,
+    status: status,
+    duration: 3000,
+    isClosable: true,
+    containerStyle: {
+      fontFamily: 'body',
+    },
+  };
 };

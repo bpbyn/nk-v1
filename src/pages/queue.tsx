@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image, Text, useToast } from '@chakra-ui/react';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import moment from 'moment';
@@ -10,10 +10,11 @@ import Layout from '../layouts/Layout';
 import { db } from '../lib/api/firebase';
 import { getDocuments, updateOrderStatus } from '../lib/api/service';
 import { OrderDetails, OrderStatus } from '../types';
-import { sortOrders } from '../utils';
+import { sortOrders, toastUtil } from '../utils';
 import type { NextPageWithLayout } from './_app';
 
 const Queue: NextPageWithLayout = () => {
+  const toast = useToast();
   const [customerOrders, setCustomerOrders] = useState(null);
   const [menu, setMenu] = useState(null);
 
@@ -53,35 +54,31 @@ const Queue: NextPageWithLayout = () => {
   }, []);
 
   const handleCompleteTask = (order: OrderDetails) => {
-    updateOrderStatus('orders', order.id).then(() => {
-      // eslint-disable-next-line no-console
-      console.log('update completed');
-    });
+    updateOrderStatus('orders', order.id)
+      .then(() => {
+        // eslint-disable-next-line no-console
+        console.log('update completed');
+        toast(
+          toastUtil(`Order (${order.orderId}) has been completed.`, 'success')
+        );
+      })
+      .catch(() => {
+        // eslint-disable-next-line no-console
+        toast(toastUtil(`Failed to complete order.`, 'error'));
+      });
   };
 
   return (
-    <Box p={{ base: '5', lg: '10' }}>
+    <Flex p={{ base: '5', lg: '10' }} h="full" flexDir="column">
       <Heading
         fontFamily="body"
-        letterSpacing={5}
+        letterSpacing={10}
         my={5}
         textAlign={{ base: 'center', sm: 'left' }}
       >
         NEW ORDERS
       </Heading>
-      {customerOrders?.length > 0 ? (
-        <Box>
-          {customerOrders ? (
-            <OrderCards
-              customerOrders={customerOrders}
-              menu={menu}
-              handleCompleteTask={handleCompleteTask}
-            />
-          ) : (
-            <LoadingSpinner />
-          )}
-        </Box>
-      ) : (
+      {customerOrders?.length === 0 && (
         <Box
           as={Flex}
           flexFlow="column wrap"
@@ -98,11 +95,22 @@ const Queue: NextPageWithLayout = () => {
             borderRadius="full"
           />
           <Text color="nk_gray.30" p={5}>
-            No Data Available
+            {`You're All Caught Up For Now 🤭`}
           </Text>
         </Box>
       )}
-    </Box>
+      <Box h="full">
+        {customerOrders ? (
+          <OrderCards
+            customerOrders={customerOrders}
+            menu={menu}
+            handleCompleteTask={handleCompleteTask}
+          />
+        ) : (
+          <LoadingSpinner />
+        )}
+      </Box>
+    </Flex>
   );
 };
 

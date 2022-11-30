@@ -49,22 +49,27 @@ export const updateCounter = async (counterValue: number) => {
 };
 
 export const addOrder = async (orderDetails: OrderDetails) => {
-  try {
-    await getDocument('counter', 'queue').then(async (counter) => {
-      const newCount = counter.data().queueCount + 1;
+  return new Promise((resolve, reject) => {
+    try {
+      getDocument('counter', 'queue').then(async (counter) => {
+        const newCount = counter.data().queueCount + 1;
 
-      const order: OrderDetails = {
-        ...orderDetails,
-        orderId: 'PO-' + pad(newCount),
-        orderStatus: OrderStatus.PENDING,
-        orderTimestamp: moment().valueOf(),
-      };
+        const order: OrderDetails = {
+          ...orderDetails,
+          orderId: 'PO-' + pad(newCount),
+          orderStatus: OrderStatus.PENDING,
+          orderTimestamp: moment().valueOf(),
+        };
 
-      await updateCounter(newCount);
-      await addDoc(collection(db, 'orders'), order);
-    });
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('Place order failed');
-  }
+        await updateCounter(newCount);
+        await addDoc(collection(db, 'orders'), order);
+
+        resolve(order);
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('Place order failed');
+      reject();
+    }
+  });
 };
