@@ -43,6 +43,24 @@ export enum OrderStatus {
   COMPLETED = 'completed',
 }
 
+export interface CupTotal {
+  total: number;
+  regular: number;
+  large: number;
+}
+
+export interface ChartDetails {
+  regularCupsData: PieChartDetails[];
+  largeCupsData: PieChartDetails[];
+  totalRegularCups: number;
+  totalLargeCups: number;
+}
+
+export interface PieChartDetails {
+  name: string;
+  count: number;
+}
+
 export interface OrderMenuProps {
   menu: MenuDetails[];
   sendSelectedOrderToCart?: (
