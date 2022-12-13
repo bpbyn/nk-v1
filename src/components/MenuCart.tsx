@@ -157,6 +157,8 @@ const MenuCart: React.FC<OrderMenuProps> = ({
       </Button>
 
       <Drawer
+        // eslint-disable-next-line jsx-a11y/no-autofocus
+        autoFocus={false}
         isOpen={isOpen}
         placement="bottom"
         onClose={onClose}
