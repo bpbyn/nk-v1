@@ -31,11 +31,15 @@ export const getDocument = async (collection, documentId: string) => {
   return await getDoc(documentRef);
 };
 
-export const updateOrderStatus = async (collection, documentId: string) => {
+export const updateOrderStatus = async (
+  collection,
+  documentId: string,
+  status: OrderStatus
+) => {
   const documentRef = doc(db, collection, documentId);
 
   return await updateDoc(documentRef, {
-    orderStatus: OrderStatus.COMPLETED,
+    orderStatus: status,
   });
 };
 
@@ -56,8 +60,8 @@ export const addOrder = async (orderDetails: OrderDetails) => {
 
         const order: OrderDetails = {
           ...orderDetails,
-          orderId: 'PO-' + pad(newCount),
-          orderStatus: OrderStatus.PENDING,
+          orderId: 'SO-' + pad(newCount),
+          orderStatus: OrderStatus.BREWING,
           orderTimestamp: moment().valueOf(),
         };
 

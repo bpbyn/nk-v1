@@ -1,7 +1,7 @@
 import { UseToastOptions } from '@chakra-ui/react';
 import moment from 'moment';
 
-import { MenuDetails, OrderDetails } from './types';
+import { MenuDetails, OrderDetails, ProductDetails } from './types';
 
 export const generateOrderId = () => {
   const now = Date.now().toString();
@@ -64,4 +64,13 @@ export const toastUtil = (title: string, status: UseToastOptions['status']) => {
       fontFamily: 'body',
     },
   };
+};
+
+export const orderedProductsToString = (orders: ProductDetails[]) => {
+  const orderedProducts = orders.map(
+    (order) =>
+      `${order.productCount}-${order.productSize}-${order.productName}-${order.productCost}`
+  );
+
+  return orderedProducts.join(', ');
 };

@@ -38,15 +38,18 @@ export interface ProductSize {
 }
 
 export enum OrderStatus {
-  PENDING = 'pending',
-  LOADING = 'loading',
+  BREWING = 'brewing',
+  SERVING = 'serving',
   COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  LOADING = 'loading',
 }
 
 export interface CupTotal {
   total: number;
   regular: number;
   large: number;
+  snacks: number;
 }
 
 export interface ChartDetails {

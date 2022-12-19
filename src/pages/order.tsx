@@ -13,7 +13,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import MenuCards from '../components/MenuCards';
 import MenuCart from '../components/MenuCart';
 import Layout from '../layouts/Layout';
-import { getDocument, getDocuments } from '../lib/api/service';
+import { getDocuments } from '../lib/api/service';
 import { OrderDetails, ProductDetails, SelectedOrderDetails } from '../types';
 import { filterMenu, getMenuPrice } from '../utils';
 import type { NextPageWithLayout } from './_app';
@@ -31,19 +31,12 @@ const Order: NextPageWithLayout = () => {
   const [menu, setMenu] = useState(null);
   const [cart, setSelectedOrdersToCart] = useState<OrderDetails>(initialCart);
   const [clearMenuCards, setClearMenuCards] = useState(false);
-  const [counter, setCounter] = useState(null);
 
   useEffect(() => {
     getDocuments('menu').then((documents) =>
       setMenu(
         documents.sort((a, b) => a.prettyName.localeCompare(b.prettyName))
       )
-    );
-  }, []);
-
-  useEffect(() => {
-    getDocument('counter', 'queue').then((doc) =>
-      setCounter({ date: doc.data().date, queueCount: doc.data().queueCount })
     );
   }, []);
 
@@ -189,7 +182,6 @@ const Order: NextPageWithLayout = () => {
       <MenuCart
         menu={menu}
         cart={cart}
-        counter={counter}
         sendSelectedOrderToCart={handleOrderFromCart}
         sendUpdatedValueToCart={handleUpdatedValueFromCart}
         removeSelectedOrderToCart={handleRemoveOrderFromCart}
