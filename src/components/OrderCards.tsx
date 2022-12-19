@@ -7,20 +7,28 @@ import {
   Flex,
   Heading,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SimpleGrid,
   StackDivider,
   Text,
+  useDisclosure,
   VStack,
   Wrap,
 } from '@chakra-ui/react';
 
-import { MenuDetails, OrderDetails } from '../types';
+import { MenuDetails, OrderDetails, OrderStatus } from '../types';
 import { getPrettyName } from '../utils';
 
 interface OrderCardsProps {
   customerOrders: OrderDetails[];
   menu: MenuDetails[];
-  handleCompleteTask: (order: OrderDetails) => void;
+  handleCompleteTask: (order: OrderDetails, status: OrderStatus) => void;
 }
 
 const OrderCards: React.FC<OrderCardsProps> = ({
@@ -28,6 +36,7 @@ const OrderCards: React.FC<OrderCardsProps> = ({
   menu,
   handleCompleteTask,
 }) => {
+  const { isOpen, onToggle, onClose } = useDisclosure();
   return (
     <SimpleGrid minChildWidth={{ base: '250px', xl: '300px' }} spacing="40px">
       {customerOrders.map((o) => (
@@ -74,7 +83,7 @@ const OrderCards: React.FC<OrderCardsProps> = ({
                 key={`ordered-products-${i}`}
                 justify="space-evenly"
                 gap={5}
-                py={5}
+                p={5}
               >
                 <Image
                   alt="Coffee"
@@ -86,7 +95,7 @@ const OrderCards: React.FC<OrderCardsProps> = ({
                   flexDir="column"
                   gap={2}
                   justify="center"
-                  align="start"
+                  align="center"
                   w="200px"
                 >
                   <Heading size="sm" fontFamily="body">
@@ -140,16 +149,66 @@ const OrderCards: React.FC<OrderCardsProps> = ({
             )}
           </VStack>
           {!o.orderNotes && <Divider />}
-          <Flex justify="center">
+          <Flex
+            justify={
+              o.orderStatus === OrderStatus.BREWING ? 'space-around' : 'center'
+            }
+          >
             <Button
               colorScheme="green"
-              onClick={() => handleCompleteTask(o)}
+              onClick={() => {
+                if (o.orderStatus === OrderStatus.BREWING) {
+                  handleCompleteTask(o, OrderStatus.SERVING);
+                } else {
+                  handleCompleteTask(o, OrderStatus.COMPLETED);
+                }
+              }}
               fontWeight={500}
               borderRadius={15}
               my={5}
             >
-              Serve
+              {o.orderStatus === OrderStatus.BREWING ? 'Serve' : 'Complete'}
             </Button>
+            {o.orderStatus === OrderStatus.BREWING && (
+              <>
+                <Button
+                  colorScheme="red"
+                  opacity={0.9}
+                  onClick={onToggle}
+                  fontWeight={500}
+                  borderRadius={15}
+                  my={5}
+                >
+                  Cancel
+                </Button>
+                <Modal onClose={onClose} isOpen={isOpen} isCentered size="xs">
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>Confirmation</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                      Are you sure you want to cancel this order?
+                    </ModalBody>
+                    <ModalFooter as={Flex} justifyContent="space-around">
+                      <Button
+                        colorScheme="orange"
+                        bg="nk_orange"
+                        borderRadius={15}
+                        onClick={() => {
+                          handleCompleteTask(o, OrderStatus.CANCELLED);
+                          onClose();
+                        }}
+                      >
+                        Yes
+                      </Button>
+                      <Button borderRadius={15} onClick={onClose}>
+                        No
+                      </Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
+              </>
+            )}
           </Flex>
         </Box>
       ))}

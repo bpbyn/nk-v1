@@ -2,6 +2,7 @@ import { ArrowRightIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
   Badge,
   Box,
+  Button,
   Flex,
   Heading,
   SimpleGrid,
@@ -16,6 +17,7 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useMemo, useState } from 'react';
+import { CSVLink } from 'react-csv';
 
 import LoadingSpinner from '../components/LoadingSpinner';
 import OrderProductChart from '../components/OrderProductChart';
@@ -23,11 +25,17 @@ import Layout from '../layouts/Layout';
 import { db } from '../lib/api/firebase';
 import { getDocuments } from '../lib/api/service';
 import { ChartDetails, CupTotal, OrderDetails, OrderStatus } from '../types';
-import { formatPrice, getPrettyName, sortOrders } from '../utils';
+import {
+  formatPrice,
+  getPrettyName,
+  orderedProductsToString,
+  sortOrders,
+} from '../utils';
 import type { NextPageWithLayout } from './_app';
 
 const Analytics: NextPageWithLayout = () => {
   const [customerOrders, setCustomerOrders] = useState(null);
+  const [reports, setReports] = useState(null);
   const [menu, setMenu] = useState(null);
 
   useEffect(() => {
@@ -59,6 +67,9 @@ const Analytics: NextPageWithLayout = () => {
       });
 
       fetchedOrders = sortOrders(fetchedOrders);
+
+      setReports(fetchedOrders);
+
       fetchedOrders = fetchedOrders.filter(
         (x) => x.orderStatus === OrderStatus.COMPLETED
       );
@@ -68,11 +79,53 @@ const Analytics: NextPageWithLayout = () => {
     return () => unsubscribe();
   }, []);
 
+  const generateReport = (orders: OrderDetails[]) => {
+    const report = [];
+    const headers = [
+      { label: 'Date', key: 'orderDate' },
+      { label: 'Time', key: 'orderTime' },
+      { label: 'ID', key: 'orderId' },
+      { label: 'Name', key: 'customerName' },
+      { label: 'Status', key: 'orderStatus' },
+      { label: 'Ordered Products', key: 'orderedProducts' },
+      { label: 'Notes', key: 'orderNotes' },
+      { label: 'Order Total', key: 'orderTotal' },
+    ];
+
+    orders.map((order: OrderDetails) => {
+      const customer = {
+        orderDate: moment(order.orderTimestamp).format('MM/DD/YYYY'),
+        orderTime: moment(order.orderTimestamp).format('hh:mm:ss a'),
+        orderId: order.orderId,
+        customerName: order.customerName,
+        orderStatus: order.orderStatus,
+        orderNotes: order.orderNotes,
+        orderedProducts: orderedProductsToString(order.orderedProducts),
+        orderTotal: order.orderedProducts.reduce(
+          (total, item) => item.productCost + total,
+          0
+        ),
+      };
+
+      report.push(customer);
+    });
+
+    const csvReport = {
+      filename: `${moment().format('MMDDYYYY')}_NK_Daily_Report.csv`,
+      headers: headers,
+      data: report,
+    };
+
+    return csvReport;
+  };
+
   const calculateCups = (orders: OrderDetails[]): CupTotal => {
     const totalRegularCups = _.chain(orders)
       .map((o) => o.orderedProducts)
       .flatten()
       .filter((p) => p.productSize === 'REGULAR')
+      // use this filter for the meantime
+      .filter((p) => p.productName !== 'GRILLED_4_CHEESE')
       .reduce((total, item) => item.productCount + total, 0)
       .value();
 
@@ -83,12 +136,21 @@ const Analytics: NextPageWithLayout = () => {
       .reduce((total, item) => item.productCount + total, 0)
       .value();
 
+    const totalSnacks = _.chain(orders)
+      .map((o) => o.orderedProducts)
+      .flatten()
+      // use this filter for the meantime
+      .filter((p) => p.productName === 'GRILLED_4_CHEESE')
+      .reduce((total, item) => item.productCount + total, 0)
+      .value();
+
     const totalCups = totalRegularCups + totalLargeCups;
 
     return {
       total: totalCups,
       regular: totalRegularCups,
       large: totalLargeCups,
+      snacks: totalSnacks,
     };
   };
 
@@ -97,6 +159,8 @@ const Analytics: NextPageWithLayout = () => {
       .map((o) => o.orderedProducts)
       .flatten()
       .filter((p) => p.productSize === 'REGULAR')
+      // use this filter for the meantime
+      .filter((p) => p.productName !== 'GRILLED_4_CHEESE')
       .reduce((total, item) => item.productCost + total, 0)
       .value();
 
@@ -107,12 +171,21 @@ const Analytics: NextPageWithLayout = () => {
       .reduce((total, item) => item.productCost + total, 0)
       .value();
 
-    const totalSales = totalSalesForRegular + totalSalesForLarge;
+    const totalSnacks = _.chain(orders)
+      .map((o) => o.orderedProducts)
+      .flatten()
+      // use this filter for the meantime
+      .filter((p) => p.productName === 'GRILLED_4_CHEESE')
+      .reduce((total, item) => item.productCost + total, 0)
+      .value();
+
+    const totalSales = totalSalesForRegular + totalSalesForLarge + totalSnacks;
 
     return {
       total: totalSales,
       regular: totalSalesForRegular,
       large: totalSalesForLarge,
+      snacks: totalSnacks,
     };
   };
 
@@ -126,10 +199,14 @@ const Analytics: NextPageWithLayout = () => {
     [customerOrders]
   );
 
+  const report = useMemo(() => reports && generateReport(reports), [reports]);
+
   const cupsChartData: ChartDetails = useMemo(() => {
     const regularCupsChart = _.chain(customerOrders)
       .map((o) => o.orderedProducts)
       .flatten()
+      // use this filter for the meantime
+      .filter((p) => p.productName !== 'GRILLED_4_CHEESE')
       .filter((p) => p.productSize === 'REGULAR')
       .groupBy('productName')
       .map((array, key) => ({
@@ -161,14 +238,13 @@ const Analytics: NextPageWithLayout = () => {
 
   return customerOrders ? (
     <Box p={{ base: 3, md: 5 }} as={Flex} flexFlow="column" gap={10} h="full">
-      <SimpleGrid columns={2} spacing={10} minChildWidth="145px" color="white">
+      <SimpleGrid columns={2} spacing={5} minChildWidth="145px" color="white">
         <Box
           p={5}
           as={Flex}
           flexDir="column"
           align="start"
           bg="nk_black"
-          height="150px"
           borderRadius={30}
           boxShadow="sm"
         >
@@ -186,12 +262,12 @@ const Analytics: NextPageWithLayout = () => {
 
           <Flex
             py={1}
-            alignItems="center"
+            flexFlow="row wrap"
             justifyContent="space-between"
             w="full"
             gap={2}
           >
-            <Stack direction="row" align="center" spacing={1}>
+            <Stack direction="row" align="start" spacing={1}>
               <Badge bg="nk_orange" pt="2px">
                 R
               </Badge>
@@ -200,7 +276,15 @@ const Analytics: NextPageWithLayout = () => {
                 {cups?.regular}
               </Badge>
             </Stack>
-
+            <Stack direction="row" align="center" spacing={1}>
+              <Badge bg="nk_orange" pt="2px">
+                S
+              </Badge>
+              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+              <Badge bg="white" pt="2px">
+                {cups?.snacks}
+              </Badge>
+            </Stack>
             <Stack direction="row" align="center" spacing={1}>
               <Badge bg="nk_orange" pt="2px">
                 L
@@ -219,34 +303,23 @@ const Analytics: NextPageWithLayout = () => {
           flexDir="column"
           align="start"
           bg="nk_orange"
-          height="150px"
           borderRadius={30}
           boxShadow="sm"
         >
           <Text fontSize="xs">TOTAL SALES</Text>
           <Flex align="center" justify="space-between" w="full">
-            <Heading
-              size="xl"
-              fontFamily="body"
-              textAlign="center"
-              letterSpacing="2px"
-            >
+            <Heading size="lg" fontFamily="body" textAlign="center">
               {formatPrice(sales?.total)}
             </Heading>
             <ArrowRightIcon
-              transform="rotate(90deg)"
+              transform={
+                sales?.total >= 5000 ? 'rotate(-90deg)' : 'rotate(90deg)'
+              }
+              color={sales?.total >= 5000 ? 'green' : 'red.500'}
               boxSize={4}
-              color="red.500"
             />
           </Flex>
-          <Flex
-            py={1}
-            flexDir="column"
-            alignItems="start"
-            justifyContent="space-between"
-            w="full"
-            gap={2}
-          >
+          <Flex py={1} flexFlow="row wrap" w="full" gap={2}>
             <Stack
               direction="row"
               align="center"
@@ -278,6 +351,22 @@ const Analytics: NextPageWithLayout = () => {
                 {formatPrice(sales?.large)}
               </Badge>
             </Stack>
+
+            <Stack
+              direction="row"
+              align="center"
+              justify="left"
+              w="full"
+              spacing={1}
+            >
+              <Badge bg="nk_black" color="nk_orange" pt="2px">
+                S
+              </Badge>
+              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+              <Badge bg="white" color="nk_orange" pt="2px">
+                {formatPrice(sales?.snacks)}
+              </Badge>
+            </Stack>
           </Flex>
         </Box>
       </SimpleGrid>
@@ -299,6 +388,17 @@ const Analytics: NextPageWithLayout = () => {
 
         <OrderProductChart cupsChartData={cupsChartData} />
       </Tabs>
+      <Box as={Flex} justify="center" align="center">
+        <Button
+          colorScheme="green"
+          fontWeight={500}
+          borderRadius={15}
+          my={5}
+          disabled={customerOrders.length === 0}
+        >
+          <CSVLink {...report}>Generate Report</CSVLink>
+        </Button>
+      </Box>
     </Box>
   ) : (
     <LoadingSpinner />

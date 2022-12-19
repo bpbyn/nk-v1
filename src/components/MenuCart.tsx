@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { useMemo, useRef, useState } from 'react';
 
-import { addOrder, updateCounter } from '../lib/api/service';
+import { addOrder, getDocument, updateCounter } from '../lib/api/service';
 import {
   OrderDetails,
   OrderMenuProps,
@@ -46,7 +46,6 @@ const MenuCart: React.FC<OrderMenuProps> = ({
   removeSelectedOrderToCart,
   clearCart,
   cart,
-  counter,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [orderNotes, setOrderNotes] = useState('');
@@ -54,38 +53,47 @@ const MenuCart: React.FC<OrderMenuProps> = ({
   const btnRef = useRef();
   const toast = useToast();
 
-  const processOrder = (orderDetails: OrderDetails) => {
+  const processOrder = async (orderDetails: OrderDetails) => {
     setOrderNotes('');
     setOrderLoader(true);
-    if (isValidDate(counter.date)) {
-      // do update transaction
-      addOrder(orderDetails)
-        .then((order: OrderDetails) => {
-          setOrderLoader(false);
-          clearCart();
-          onClose();
-          toast(
-            toastUtil(`Order (${order.orderId}) has been placed.`, 'success')
-          );
-        })
-        .catch(() => {
-          toast(toastUtil(`Failed to place order.`, 'error'));
-        });
-    } else {
-      updateCounter(0);
-      addOrder(orderDetails)
-        .then((order: OrderDetails) => {
-          setOrderLoader(false);
-          clearCart();
-          onClose();
-          toast(
-            toastUtil(`Order (${order.orderId}) has been placed.`, 'success')
-          );
-        })
-        .catch(() => {
-          toast(toastUtil(`Failed to place order.`, 'error'));
-        });
-    }
+
+    await getDocument('counter', 'queue').then((doc) => {
+      if (isValidDate(doc.data().date)) {
+        // do update transaction
+        addOrder(orderDetails)
+          .then((order: OrderDetails) => {
+            setOrderLoader(false);
+            clearCart();
+            onClose();
+            toast(
+              toastUtil(
+                `Order (${order.orderId}) by ${order.customerName} has been placed.`,
+                'success'
+              )
+            );
+          })
+          .catch(() => {
+            toast(toastUtil(`Failed to place order.`, 'error'));
+          });
+      } else {
+        updateCounter(0);
+        addOrder(orderDetails)
+          .then((order: OrderDetails) => {
+            setOrderLoader(false);
+            clearCart();
+            onClose();
+            toast(
+              toastUtil(
+                `Order (${order.orderId}) by ${order.customerName} has been placed.`,
+                'success'
+              )
+            );
+          })
+          .catch(() => {
+            toast(toastUtil(`Failed to place order.`, 'error'));
+          });
+      }
+    });
   };
 
   const handleMenuChange = (value: number, id: string) => {
