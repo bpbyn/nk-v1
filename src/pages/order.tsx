@@ -54,6 +54,7 @@ const Order: NextPageWithLayout = () => {
       productSize: order.size,
       productCount: order.quantity + (productFound?.productCount ?? 0),
       productCost: getMenuPrice(id, order.size, menu) * order.quantity,
+      productType: order.type,
     };
 
     if (!present) {
@@ -143,7 +144,12 @@ const Order: NextPageWithLayout = () => {
     setClearMenuCards(true);
   };
 
-  const menuItems = ['Coffee', 'Non Coffee', 'Snacks'];
+  const menuItems = {
+    Cold: '❄️ Cold',
+    Hot: '🔥 Hot',
+    Non_Coffee: '🥤 Others',
+    Snacks: '🥪 Snacks',
+  };
 
   return menu ? (
     <Flex
@@ -153,22 +159,28 @@ const Order: NextPageWithLayout = () => {
       position="relative"
       zIndex={1}
     >
-      <Tabs variant="soft-rounded" p={{ base: '5', lg: '5' }} h="full">
+      <Tabs
+        variant="soft-rounded"
+        p={{ base: '5', lg: '5' }}
+        px={{ base: 0 }}
+        h="full"
+      >
         <TabList justifyContent={{ base: 'center', md: 'start' }}>
-          {menuItems.map((item) => (
+          {Object.keys(menuItems).map((item) => (
             <Tab
               fontWeight={100}
               key={item}
               _selected={{ bg: 'nk_orange', color: 'white' }}
+              px={3}
             >
-              {item}
+              {menuItems[item]}
             </Tab>
           ))}
         </TabList>
         <TabPanels h="full">
           {menu &&
-            menuItems.map((item) => (
-              <TabPanel key={item} px={0} pb={0} h="full">
+            Object.keys(menuItems).map((item) => (
+              <TabPanel key={item} px={5} pb={0} h="full">
                 <MenuCards
                   menu={filterMenu(menu, item)}
                   sendSelectedOrderToCart={handleOrderFromMenu}

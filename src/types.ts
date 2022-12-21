@@ -13,6 +13,7 @@ export interface ProductDetails {
   productSize: string;
   productCount: number;
   productCost: number;
+  productType: string;
 }
 
 export interface MenuDetails {
@@ -25,6 +26,7 @@ export interface MenuDetails {
 export interface SelectedOrderDetails {
   quantity: number;
   size: string;
+  type: string;
 }
 
 export interface CounterDetails {

@@ -110,9 +110,10 @@ const MenuCards: React.FC<OrderMenuProps> = ({
                         ? false
                         : true
                     }
-                    onClick={() =>
-                      sendSelectedOrderToCart(item.id, listOfOrders[item.id])
-                    }
+                    onClick={() => {
+                      listOfOrders[item.id].type = item.type;
+                      sendSelectedOrderToCart(item.id, listOfOrders[item.id]);
+                    }}
                     type="submit"
                     boxShadow="md"
                     background="nk_orange"
