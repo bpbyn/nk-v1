@@ -394,7 +394,7 @@ const Analytics: NextPageWithLayout = () => {
           fontWeight={500}
           borderRadius={15}
           my={5}
-          disabled={customerOrders.length === 0}
+          visibility={customerOrders.length === 0 ? 'hidden' : 'visible'}
         >
           <CSVLink {...report}>Generate Report</CSVLink>
         </Button>
