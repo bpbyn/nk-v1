@@ -197,74 +197,89 @@ const MenuCart: React.FC<OrderMenuProps> = ({
               pr={8}
               pt={4}
             >
-              {cart.orderedProducts.map((order: ProductDetails, i) => (
-                <Box key={`${order.productName}-${i}`} position="relative">
-                  <Button
-                    size="xs"
-                    fontSize="lg"
-                    colorScheme="red"
-                    bg="red.300"
-                    borderRadius={100}
-                    position="absolute"
-                    right="-10px"
-                    top="-10px"
-                    transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
-                    _active={{
-                      transform: 'scale(1.09)',
-                    }}
-                    _hover={{
-                      backgroundColor: 'none',
-                    }}
-                    onClick={() => removeSelectedOrderToCart(order.productName)}
-                  >
-                    -
-                  </Button>
-                  <Flex
-                    bg="white"
-                    borderRadius={15}
-                    align="center"
-                    justify="space-evenly"
-                    p={5}
-                    gap={5}
-                  >
-                    <Image
-                      alt="Coffee"
-                      src="/assets/coffee_image.jpg"
-                      boxSize="100px"
-                      borderRadius={15}
-                    />
-                    <VStack w="200px" justify="center" align="start">
-                      <Heading size="sm" fontFamily="body">
-                        {getPrettyName(order.productName, menu)}
-                      </Heading>
-                      <Flex>
-                        <Text fontSize={14} color="nk_gray.30" fontWeight={100}>
-                          {`${order.productSize} |
-                          ${formatSize(order.productSize)}`}
-                        </Text>
-                      </Flex>
-                      <Flex gap={3}>
-                        <Tag size="md" flex={1} bg="nk_gray.10" w="100%" pt={1}>
-                          <b>
-                            {formatPrice(
-                              getProductPrice(
-                                menu,
-                                order.productName,
-                                order.productSize
-                              ) * order.productCount
-                            )}
-                          </b>
-                        </Tag>
-                        <MenuNumberInput
-                          onChange={handleMenuChange}
-                          id={order.productName}
-                          initialValue={order.productCount}
+              {cart.orderedProducts.map(
+                (order: ProductDetails, i) =>
+                  order.productCount > 0 && (
+                    <Box key={`${order.productName}-${i}`} position="relative">
+                      <Button
+                        size="xs"
+                        fontSize="lg"
+                        colorScheme="red"
+                        bg="red.300"
+                        borderRadius={100}
+                        position="absolute"
+                        right="-10px"
+                        top="-10px"
+                        transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
+                        _active={{
+                          transform: 'scale(1.09)',
+                        }}
+                        _hover={{
+                          backgroundColor: 'none',
+                        }}
+                        onClick={() =>
+                          removeSelectedOrderToCart(order.productName)
+                        }
+                      >
+                        -
+                      </Button>
+                      <Flex
+                        bg="white"
+                        borderRadius={15}
+                        align="center"
+                        justify="space-evenly"
+                        p={5}
+                        gap={5}
+                      >
+                        <Image
+                          alt="Coffee"
+                          src="/assets/coffee_image.jpg"
+                          boxSize="100px"
+                          borderRadius={15}
                         />
+                        <VStack w="200px" justify="center" align="start">
+                          <Heading size="sm" fontFamily="body">
+                            {getPrettyName(order.productName, menu)}
+                          </Heading>
+                          <Flex>
+                            <Text
+                              fontSize={14}
+                              color="nk_gray.30"
+                              fontWeight={100}
+                            >
+                              {`${order.productSize} |
+                          ${formatSize(order.productSize)}`}
+                            </Text>
+                          </Flex>
+                          <Flex gap={3}>
+                            <Tag
+                              size="md"
+                              flex={1}
+                              bg="nk_gray.10"
+                              w="100%"
+                              pt={1}
+                            >
+                              <b>
+                                {formatPrice(
+                                  getProductPrice(
+                                    menu,
+                                    order.productName,
+                                    order.productSize
+                                  ) * order.productCount
+                                )}
+                              </b>
+                            </Tag>
+                            <MenuNumberInput
+                              onChange={handleMenuChange}
+                              id={order.productName}
+                              initialValue={order.productCount}
+                            />
+                          </Flex>
+                        </VStack>
                       </Flex>
-                    </VStack>
-                  </Flex>
-                </Box>
-              ))}
+                    </Box>
+                  )
+              )}
             </VStack>
             <Divider borderColor="nk_gray.30" borderStyle="dashed" />
             <Flex w="full" justify="space-between">
@@ -290,7 +305,11 @@ const MenuCart: React.FC<OrderMenuProps> = ({
               bg="nk_orange"
               fontWeight={500}
               borderRadius={15}
-              isDisabled={!cart.customerName}
+              isDisabled={
+                !cart.customerName ||
+                cart.orderedProducts.length === 0 ||
+                totalPrice === 0
+              }
               isLoading={orderLoader}
               onClick={() => processOrder(cart)}
             >
