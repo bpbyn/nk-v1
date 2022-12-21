@@ -15,7 +15,7 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  StackDivider,
+  StackDivider, // Tag,
   Text,
   useDisclosure,
   VStack,
@@ -93,11 +93,17 @@ const OrderCards: React.FC<OrderCardsProps> = ({
                 />
                 <Flex
                   flexDir="column"
-                  gap={2}
+                  gap={3}
                   justify="center"
                   align="center"
                   w="200px"
                 >
+                  {/* <Tag bg="red.500" opacity={0.9} pt={1} color="white">
+                    🔥 HOT
+                  </Tag> */}
+                  {/* <Tag bg="blue.500" opacity={0.9} pt={1} color="white">
+                    ❄️ COLD
+                  </Tag> */}
                   <Heading size="sm" fontFamily="body">
                     {getPrettyName(p.productName, menu)}
                   </Heading>

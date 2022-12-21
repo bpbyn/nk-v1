@@ -40,7 +40,7 @@ const OrderProductChart: React.FC<OrderProductChartProps> = ({
   return (
     <TabPanels>
       {toggleSizeChart.map(({ chartData, total }, index) => (
-        <TabPanel key={index}>
+        <TabPanel key={index} overflowY="auto">
           {total > 0 ? (
             <ResponsiveContainer height={300} width="80%">
               <PieChart>
