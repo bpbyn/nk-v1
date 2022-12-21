@@ -15,7 +15,8 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  StackDivider, // Tag,
+  StackDivider,
+  Tag,
   Text,
   useDisclosure,
   VStack,
@@ -98,39 +99,40 @@ const OrderCards: React.FC<OrderCardsProps> = ({
                   align="center"
                   w="200px"
                 >
-                  {/* <Tag bg="red.500" opacity={0.9} pt={1} color="white">
-                    🔥 HOT
-                  </Tag> */}
-                  {/* <Tag bg="blue.500" opacity={0.9} pt={1} color="white">
-                    ❄️ COLD
-                  </Tag> */}
-                  <Heading size="sm" fontFamily="body">
-                    {getPrettyName(p.productName, menu)}
-                  </Heading>
-                  <Wrap>
-                    <Text
-                      w="fit-content"
-                      color="white"
-                      bg="nk_orange"
-                      px="1.5"
-                      rounded={5}
-                      boxShadow="md"
-                      textTransform="capitalize"
-                    >
-                      {p.productCount}
-                    </Text>
-                    <Text
-                      w="fit-content"
-                      color="white"
-                      bg="nk_gray.30"
-                      px="1.5"
-                      rounded={5}
-                      boxShadow="md"
-                      textTransform="capitalize"
-                    >
-                      {p.productSize.toLocaleLowerCase()}
-                    </Text>
-                  </Wrap>
+                  <>
+                    <Heading size="sm" fontFamily="body">
+                      {getPrettyName(p.productName, menu)
+                        .replace('Iced', '')
+                        .replace('Hot', '')
+                        .trim()}
+                    </Heading>
+
+                    <Wrap>
+                      <Text
+                        w="fit-content"
+                        color="white"
+                        bg="nk_orange"
+                        px="1.5"
+                        rounded={5}
+                        boxShadow="md"
+                        textTransform="capitalize"
+                      >
+                        {p.productCount}
+                      </Text>
+                      <Text
+                        w="fit-content"
+                        color="white"
+                        bg="nk_gray.30"
+                        px="1.5"
+                        rounded={5}
+                        boxShadow="md"
+                        textTransform="capitalize"
+                      >
+                        {p.productSize.toLocaleLowerCase()}
+                      </Text>
+                    </Wrap>
+                    {displayProducType(p.productType)}
+                  </>
                 </Flex>
               </Flex>
             ))}
@@ -223,3 +225,64 @@ const OrderCards: React.FC<OrderCardsProps> = ({
 };
 
 export default OrderCards;
+
+export const displayProducType = (type: string) => {
+  switch (type) {
+    case 'Cold':
+      return (
+        <Tag
+          bg="blue.500"
+          opacity={0.8}
+          pt={2}
+          pb={1}
+          px={3}
+          color="white"
+          borderRadius={20}
+        >
+          ❄️ COLD
+        </Tag>
+      );
+    case 'Hot':
+      return (
+        <Tag
+          bg="red.500"
+          opacity={0.8}
+          pt={2}
+          pb={1}
+          px={3}
+          color="white"
+          borderRadius={20}
+        >
+          🔥 HOT
+        </Tag>
+      );
+    case 'Non_Coffee':
+      return (
+        <Tag
+          bg="purple.500"
+          opacity={0.8}
+          pt={2}
+          pb={1}
+          px={3}
+          color="white"
+          borderRadius={20}
+        >
+          🥤 OTHERS
+        </Tag>
+      );
+    case 'Snacks':
+      return (
+        <Tag
+          bg="cyan.500"
+          opacity={0.8}
+          pt={2}
+          pb={1}
+          px={3}
+          color="white"
+          borderRadius={20}
+        >
+          🥪 SNACKS
+        </Tag>
+      );
+  }
+};
