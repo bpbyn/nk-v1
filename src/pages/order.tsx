@@ -108,7 +108,10 @@ const Order: NextPageWithLayout = () => {
       ...prevState,
       orderedProducts: [
         ...prevState.orderedProducts.map((product) => {
-          if (product.productName === id) {
+          if (
+            product.productName === id &&
+            product.productSize === order.size
+          ) {
             product.productCount = order.quantity;
             product.productCost =
               getMenuPrice(id, product.productSize, menu) *

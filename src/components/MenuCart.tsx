@@ -96,9 +96,10 @@ const MenuCart: React.FC<OrderMenuProps> = ({
     });
   };
 
-  const handleMenuChange = (value: number, id: string) => {
+  const handleMenuChange = (value: number, id: string, size: string) => {
     const orderPayload: Partial<SelectedOrderDetails> = {
       quantity: value,
+      size: size,
     };
     sendSelectedOrderToCart(id, orderPayload);
   };
@@ -270,7 +271,9 @@ const MenuCart: React.FC<OrderMenuProps> = ({
                               </b>
                             </Tag>
                             <MenuNumberInput
-                              onChange={handleMenuChange}
+                              onChange={(value, id) =>
+                                handleMenuChange(value, id, order.productSize)
+                              }
                               id={order.productName}
                               initialValue={order.productCount}
                             />
