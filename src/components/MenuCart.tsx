@@ -309,9 +309,8 @@ const MenuCart: React.FC<OrderMenuProps> = ({
               fontWeight={500}
               borderRadius={15}
               isDisabled={
-                !cart.customerName ||
-                cart.orderedProducts.length === 0 ||
-                totalPrice === 0
+                !cart.customerName || cart.orderedProducts.length === 0
+                // || totalPrice === 0
               }
               isLoading={orderLoader}
               onClick={() => processOrder(cart)}

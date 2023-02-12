@@ -22,6 +22,7 @@ import {
   VStack,
   Wrap,
 } from '@chakra-ui/react';
+import { useState } from 'react';
 
 import { MenuDetails, OrderDetails, OrderStatus } from '../types';
 import { getPrettyName } from '../utils';
@@ -38,6 +39,7 @@ const OrderCards: React.FC<OrderCardsProps> = ({
   handleCompleteTask,
 }) => {
   const { isOpen, onToggle, onClose } = useDisclosure();
+  const [cancelledOrder, setCancelledOrder] = useState(null);
   return (
     <SimpleGrid minChildWidth={{ base: '250px', xl: '300px' }} spacing="40px">
       {customerOrders.map((o) => (
@@ -182,7 +184,10 @@ const OrderCards: React.FC<OrderCardsProps> = ({
                 <Button
                   colorScheme="red"
                   opacity={0.9}
-                  onClick={onToggle}
+                  onClick={() => {
+                    onToggle();
+                    setCancelledOrder(o);
+                  }}
                   fontWeight={500}
                   borderRadius={15}
                   my={5}
@@ -203,7 +208,10 @@ const OrderCards: React.FC<OrderCardsProps> = ({
                         bg="nk_orange"
                         borderRadius={15}
                         onClick={() => {
-                          handleCompleteTask(o, OrderStatus.CANCELLED);
+                          handleCompleteTask(
+                            cancelledOrder,
+                            OrderStatus.CANCELLED
+                          );
                           onClose();
                         }}
                       >
