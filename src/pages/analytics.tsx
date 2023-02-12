@@ -351,7 +351,7 @@ const Analytics: NextPageWithLayout = () => {
     const coldCupsChart = _.chain(customerOrders)
       .map((o) => o.orderedProducts)
       .flatten()
-      .filter((p) => p.productSize === 'REGULAR')
+      .filter((p) => p.productSize === 'REGULAR' || p.productSize === 'LARGE')
       .filter((p) => p.productType === 'Cold' || p.productType === 'Non_Coffee')
       .groupBy('productName')
       .map((array, key) => ({
@@ -363,7 +363,8 @@ const Analytics: NextPageWithLayout = () => {
     const hotCupsChart = _.chain(customerOrders)
       .map((o) => o.orderedProducts)
       .flatten()
-      .filter((p) => p.productSize === 'LARGE')
+      .filter((p) => p.productSize === 'REGULAR')
+      .filter((p) => p.productType === 'Hot')
       .groupBy('productName')
       .map((array, key) => ({
         name: getPrettyName(key, menu),
