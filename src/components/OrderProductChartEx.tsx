@@ -9,21 +9,19 @@ import {
   Legend,
 } from 'recharts';
 
-import { ChartDetails } from '../types';
-
 interface OrderProductChartProps {
-  cupsChartData: ChartDetails;
+  cupsChartData: any;
 }
 
 const OrderProductChart: React.FC<OrderProductChartProps> = ({
   cupsChartData,
 }) => {
-  const { coldCupsData, hotCupsData, totalColdCups, totalHotCups } =
+  const { regularCupsData, largeCupsData, totalLargeCups, totalRegularCups } =
     cupsChartData;
 
   const toggleSizeChart = [
-    { chartData: hotCupsData, total: totalHotCups },
-    { chartData: coldCupsData, total: totalColdCups },
+    { chartData: regularCupsData, total: totalRegularCups },
+    { chartData: largeCupsData, total: totalLargeCups },
   ];
 
   const COLORS = [
@@ -99,6 +97,7 @@ const OrderProductChart: React.FC<OrderProductChartProps> = ({
               as={Flex}
               flexFlow="column wrap"
               justify="start"
+              mt={20}
               alignItems="center"
               h="full"
             >

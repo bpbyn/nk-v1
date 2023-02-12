@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { IconType } from 'react-icons';
-import { FaChartLine, FaClipboardList, FaCoffee, FaCog } from 'react-icons/fa';
+import { FaChartLine, FaClipboardList, FaCoffee } from 'react-icons/fa';
 
 interface SideBarProps {
   isMobile: boolean;
@@ -20,7 +20,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'My Orders', route: '/order', icon: FaClipboardList },
   { name: 'Queue', route: '/queue', icon: FaCoffee },
   { name: 'Analytics', route: '/analytics', icon: FaChartLine },
-  { name: 'Settings', route: '/settings', icon: FaCog },
+  // { name: 'Settings', route: '/settings', icon: FaCog },
 ];
 
 const SideBarContent: React.FC<SideBarProps> = ({ onClose, isMobile }) => {

@@ -55,10 +55,10 @@ export interface CupTotal {
 }
 
 export interface ChartDetails {
-  regularCupsData: PieChartDetails[];
-  largeCupsData: PieChartDetails[];
-  totalRegularCups: number;
-  totalLargeCups: number;
+  hotCupsData: PieChartDetails[];
+  coldCupsData: PieChartDetails[];
+  totalHotCups: number;
+  totalColdCups: number;
 }
 
 export interface PieChartDetails {
