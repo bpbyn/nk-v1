@@ -236,6 +236,34 @@ const Analytics: NextPageWithLayout = () => {
     };
   };
 
+  const calculateFreeCups = (orders: OrderDetails[]) => {
+    const totalRegularCups = _.chain(orders)
+      .map((o) => o.orderedProducts)
+      .flatten()
+      .filter((p) => p.productName === 'FREE_OF_CHARGE')
+      .filter((p) => p.productSize === 'REGULAR')
+      .filter((p) => p.productType === 'Non_Coffee')
+      .reduce((total, item) => item.productCount + total, 0)
+      .value();
+
+    const totalLargeCups = _.chain(orders)
+      .map((o) => o.orderedProducts)
+      .flatten()
+      .filter((p) => p.productName === 'FREE_OF_CHARGE')
+      .filter((p) => p.productSize === 'LARGE')
+      .filter((p) => p.productType === 'Non_Coffee')
+      .reduce((total, item) => item.productCount + total, 0)
+      .value();
+
+    const totalCups = totalRegularCups + totalLargeCups;
+
+    return {
+      total: totalCups,
+      regular: totalRegularCups,
+      large: totalLargeCups,
+    };
+  };
+
   const calculateSnacks = (orders: OrderDetails[]) => {
     const totalSnacks = _.chain(orders)
       .map((o) => o.orderedProducts)
@@ -301,6 +329,11 @@ const Analytics: NextPageWithLayout = () => {
 
   const coldCups = useMemo(
     () => customerOrders && calculateColdCups(customerOrders),
+    [customerOrders]
+  );
+
+  const freeCups = useMemo(
+    () => customerOrders && calculateFreeCups(customerOrders),
     [customerOrders]
   );
 
@@ -437,6 +470,26 @@ const Analytics: NextPageWithLayout = () => {
                 <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
                 <Badge bg="white" pt="2px">
                   {hotCups?.regular}
+                </Badge>
+              </Stack>
+            </Flex>
+            <Flex w="full" flexFlow="row wrap" justify="space-between">
+              <Stack direction="row" align="center" spacing={0.5}>
+                <Badge bg="nk_black" color="nk_orange" pt="2px">
+                  FR
+                </Badge>
+                <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                <Badge bg="white" pt="2px">
+                  {freeCups?.regular}
+                </Badge>
+              </Stack>
+              <Stack direction="row" align="center" spacing={0.5}>
+                <Badge bg="nk_black" color="nk_orange" pt="2px">
+                  FL
+                </Badge>
+                <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                <Badge bg="white" pt="2px">
+                  {freeCups?.large}
                 </Badge>
               </Stack>
             </Flex>
