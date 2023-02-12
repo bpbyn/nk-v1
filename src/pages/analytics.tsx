@@ -34,6 +34,7 @@ import { TbReportSearch } from 'react-icons/tb';
 
 import LoadingSpinner from '../components/LoadingSpinner';
 import OrderProductChart from '../components/OrderProductChart';
+import SecurityWrapper from '../components/SecurityWrapper';
 import TableDatePicker from '../components/TableDatePicker';
 import Layout from '../layouts/Layout';
 import { db } from '../lib/api/firebase';
@@ -75,6 +76,7 @@ const Analytics: NextPageWithLayout = () => {
   });
   const [reports, setReports] = useState(null);
   const [checkBoxStatus, setCheckBoxStatus] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     getDocuments('menu').then((documents) =>
@@ -344,123 +346,83 @@ const Analytics: NextPageWithLayout = () => {
     };
   }, [coldCups?.total, customerOrders, hotCups?.total, menu]);
 
+  const handleLogIn = (allow: boolean) => setIsAdmin(allow);
+
   const cupTemp = ['Hot', 'Cold'];
 
   const floatAnimation = `${animation} 3s ease-in-out infinite`;
 
-  return customerOrders ? (
-    <Box p={{ base: 3, md: 5 }} as={Flex} flexFlow="column" gap={10} h="full">
-      <SimpleGrid columns={2} spacing={5} minChildWidth="145px" color="white">
-        <Box
-          p={5}
-          as={Flex}
-          flexDir="column"
-          align="start"
-          bg="nk_black"
-          borderRadius={30}
-          boxShadow="sm"
-        >
-          <Text fontSize="xs">TOTAL CUPS ❄️</Text>
-          <Flex align="center" justify="space-between" w="full">
-            <Heading size="4xl" fontFamily="body" textAlign="center">
-              {coldCups?.total}
-            </Heading>
-            <ArrowRightIcon
-              transform={
-                coldCups?.total >= 100 ? 'rotate(-90deg)' : 'rotate(90deg)'
-              }
-              boxSize={7}
-              color={coldCups?.total >= 100 ? 'green' : 'red.500'}
-            />
-          </Flex>
-
-          <Flex py={1} flexFlow="column wrap" w="full" gap={2}>
-            <Stack direction="row" align="center" spacing={1}>
-              <Badge bg="nk_orange" pt="2px">
-                ❄️R
-              </Badge>
-              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
-              <Badge bg="white" pt="2px">
-                {coldCups?.regular}
-              </Badge>
-            </Stack>
-            <Stack direction="row" align="center" spacing={1}>
-              <Badge bg="nk_orange" pt="2px">
-                ❄️L
-              </Badge>
-              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
-              <Badge bg="white" pt="2px">
-                {coldCups?.large}
-              </Badge>
-            </Stack>
-          </Flex>
-        </Box>
-        <Box
-          p={5}
-          as={Flex}
-          flexDir="column"
-          align="start"
-          bg="nk_orange"
-          borderRadius={30}
-          boxShadow="sm"
-        >
-          <Text fontSize="xs">TOTAL CUPS 🔥</Text>
-          <Flex align="center" justify="space-between" w="full">
-            <Heading size="4xl" fontFamily="body" textAlign="center">
-              {hotCups?.total}
-            </Heading>
-            <ArrowRightIcon
-              transform={
-                hotCups?.total >= 50 ? 'rotate(-90deg)' : 'rotate(90deg)'
-              }
-              boxSize={7}
-              color={hotCups?.total >= 50 ? 'green' : 'red.500'}
-            />
-          </Flex>
-
-          <Flex
-            py={1}
-            flexFlow="row wrap"
-            justifyContent="space-between"
-            w="full"
-            gap={2}
+  return isAdmin ? (
+    customerOrders ? (
+      <Box p={{ base: 3, md: 5 }} as={Flex} flexFlow="column" gap={10} h="full">
+        <SimpleGrid columns={2} spacing={5} minChildWidth="145px" color="white">
+          <Box
+            p={5}
+            as={Flex}
+            flexDir="column"
+            align="start"
+            bg="nk_black"
+            borderRadius={30}
+            boxShadow="sm"
           >
-            <Stack direction="row" align="center" spacing={1}>
-              <Badge bg="nk_black" color="nk_orange" pt="2px">
-                🔥
-              </Badge>
-              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
-              <Badge bg="white" pt="2px">
-                {hotCups?.regular}
-              </Badge>
-            </Stack>
-          </Flex>
-        </Box>
-        <Box
-          p={5}
-          as={Flex}
-          flexDir="column"
-          align="space-between"
-          bg="nk_orange"
-          borderRadius={30}
-          boxShadow="sm"
-        >
-          <Box>
-            <Text fontSize="xs">TOTAL SNACKS 🥪</Text>
+            <Text fontSize="xs">TOTAL CUPS ❄️</Text>
             <Flex align="center" justify="space-between" w="full">
               <Heading size="4xl" fontFamily="body" textAlign="center">
-                {snacks?.total}
+                {coldCups?.total}
               </Heading>
               <ArrowRightIcon
                 transform={
-                  snacks?.total >= 5 ? 'rotate(-90deg)' : 'rotate(90deg)'
+                  coldCups?.total >= 100 ? 'rotate(-90deg)' : 'rotate(90deg)'
                 }
                 boxSize={7}
-                color={snacks?.total >= 5 ? 'green' : 'red.500'}
+                color={coldCups?.total >= 100 ? 'green' : 'red.500'}
               />
             </Flex>
+
+            <Flex py={1} flexFlow="column wrap" w="full" gap={2}>
+              <Stack direction="row" align="center" spacing={1}>
+                <Badge bg="nk_orange" pt="2px">
+                  ❄️R
+                </Badge>
+                <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                <Badge bg="white" pt="2px">
+                  {coldCups?.regular}
+                </Badge>
+              </Stack>
+              <Stack direction="row" align="center" spacing={1}>
+                <Badge bg="nk_orange" pt="2px">
+                  ❄️L
+                </Badge>
+                <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                <Badge bg="white" pt="2px">
+                  {coldCups?.large}
+                </Badge>
+              </Stack>
+            </Flex>
           </Box>
-          <Box pt={2}>
+          <Box
+            p={5}
+            as={Flex}
+            flexDir="column"
+            align="start"
+            bg="nk_orange"
+            borderRadius={30}
+            boxShadow="sm"
+          >
+            <Text fontSize="xs">TOTAL CUPS 🔥</Text>
+            <Flex align="center" justify="space-between" w="full">
+              <Heading size="4xl" fontFamily="body" textAlign="center">
+                {hotCups?.total}
+              </Heading>
+              <ArrowRightIcon
+                transform={
+                  hotCups?.total >= 50 ? 'rotate(-90deg)' : 'rotate(90deg)'
+                }
+                boxSize={7}
+                color={hotCups?.total >= 50 ? 'green' : 'red.500'}
+              />
+            </Flex>
+
             <Flex
               py={1}
               flexFlow="row wrap"
@@ -470,172 +432,218 @@ const Analytics: NextPageWithLayout = () => {
             >
               <Stack direction="row" align="center" spacing={1}>
                 <Badge bg="nk_black" color="nk_orange" pt="2px">
-                  🥪
+                  🔥
                 </Badge>
                 <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
                 <Badge bg="white" pt="2px">
-                  {formatPrice(sales?.snacks)}
+                  {hotCups?.regular}
                 </Badge>
               </Stack>
             </Flex>
           </Box>
-        </Box>
-        <Box
-          p={5}
-          as={Flex}
-          flexDir="column"
-          align="start"
-          bg="nk_black"
-          borderRadius={30}
-          boxShadow="sm"
-        >
-          <Text fontSize="xs">TOTAL SALES ❄️🔥🥪</Text>
-          <Flex align="center" justify="space-between" w="full">
-            <Heading size="lg" fontFamily="body" textAlign="center">
-              {formatPrice(sales?.total)}
-            </Heading>
-            <ArrowRightIcon
-              transform={
-                sales?.total >= 5000 ? 'rotate(-90deg)' : 'rotate(90deg)'
-              }
-              color={sales?.total >= 5000 ? 'green' : 'red.500'}
-              boxSize={4}
-            />
-          </Flex>
-          <Flex py={1} flexFlow="row wrap" w="full" gap={2}>
-            <Stack
-              direction="row"
-              align="center"
-              justify="left"
-              w="full"
-              spacing={1}
-            >
-              <Badge bg="nk_orange" color="nk_black" pt="2px" w="2rem">
-                ❄️R
-              </Badge>
-              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
-              <Badge bg="white" color="nk_black" pt="2px">
-                {formatPrice(sales?.coldRegular)}
-              </Badge>
-            </Stack>
-            <Stack
-              direction="row"
-              align="center"
-              justify="left"
-              w="full"
-              spacing={1}
-            >
-              <Badge bg="nk_orange" color="nk_black" pt="2px" w="2rem">
-                ❄️L
-              </Badge>
-              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
-              <Badge bg="white" color="nk_black" pt="2px">
-                {formatPrice(sales?.coldLarge)}
-              </Badge>
-            </Stack>
-            <Stack
-              direction="row"
-              align="center"
-              justify="left"
-              w="full"
-              spacing={1}
-            >
-              <Badge
-                bg="nk_orange"
-                color="nk_black"
-                pt="2px"
-                w="2rem"
-                textAlign="center"
-              >
-                🔥
-              </Badge>
-              <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
-              <Badge bg="white" color="nk_black" pt="2px">
-                {formatPrice(sales?.hotRegular)}
-              </Badge>
-            </Stack>
-          </Flex>
-        </Box>
-      </SimpleGrid>
-      <Tabs variant="soft-rounded" size="md" align="center" h="full">
-        <TabList>
-          {cupTemp.map((temp, i) => (
-            <Tab
-              key={temp}
-              fontWeight="300"
-              _selected={{
-                bg: i % 2 === 0 ? 'nk_orange' : 'nk_black',
-                color: 'white',
-              }}
-            >
-              {temp}
-            </Tab>
-          ))}
-        </TabList>
-        <OrderProductChart cupsChartData={cupsChartData} />
-      </Tabs>
-      <Box position="absolute" bottom={5} right={5} zIndex={2} margin="auto">
-        <IconButton
-          colorScheme="orange"
-          bg="nk_orange"
-          aria-label="Select Date Range"
-          borderRadius={100}
-          icon={<TbReportSearch />}
-          animation={floatAnimation}
-          onClick={onOpen}
-        />
-      </Box>
-      <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader bg="nk_orange" color="white">
-            <Flex justify="space-between" align="center">
-              <Text letterSpacing={3}>GENERATE REPORT</Text>
-              <DrawerCloseButton position="unset" />
-            </Flex>
-          </DrawerHeader>
-
-          <DrawerBody
-            bg="nk_lightOrange"
+          <Box
+            p={5}
             as={Flex}
             flexDir="column"
-            alignItems="center"
+            align="space-between"
+            bg="nk_orange"
+            borderRadius={30}
+            boxShadow="sm"
           >
-            <Text as="b">Please select a date: </Text>
             <Box>
-              <TableDatePicker onSelectedDateChange={handleDateChange} />
+              <Text fontSize="xs">TOTAL SNACKS 🥪</Text>
+              <Flex align="center" justify="space-between" w="full">
+                <Heading size="4xl" fontFamily="body" textAlign="center">
+                  {snacks?.total}
+                </Heading>
+                <ArrowRightIcon
+                  transform={
+                    snacks?.total >= 5 ? 'rotate(-90deg)' : 'rotate(90deg)'
+                  }
+                  boxSize={7}
+                  color={snacks?.total >= 5 ? 'green' : 'red.500'}
+                />
+              </Flex>
             </Box>
-            <Checkbox
-              colorScheme="green"
-              mt={6}
-              onChange={(e) => setCheckBoxStatus(e.target.checked)}
-            >
-              <Text>Generate CSV</Text>
-            </Checkbox>
-          </DrawerBody>
+            <Box pt={2}>
+              <Flex
+                py={1}
+                flexFlow="row wrap"
+                justifyContent="space-between"
+                w="full"
+                gap={2}
+              >
+                <Stack direction="row" align="center" spacing={1}>
+                  <Badge bg="nk_black" color="nk_orange" pt="2px">
+                    🥪
+                  </Badge>
+                  <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                  <Badge bg="white" pt="2px">
+                    {formatPrice(sales?.snacks)}
+                  </Badge>
+                </Stack>
+              </Flex>
+            </Box>
+          </Box>
+          <Box
+            p={5}
+            as={Flex}
+            flexDir="column"
+            align="start"
+            bg="nk_black"
+            borderRadius={30}
+            boxShadow="sm"
+          >
+            <Text fontSize="xs">TOTAL SALES ❄️🔥🥪</Text>
+            <Flex align="center" justify="space-between" w="full">
+              <Heading size="lg" fontFamily="body" textAlign="center">
+                {formatPrice(sales?.total)}
+              </Heading>
+              <ArrowRightIcon
+                transform={
+                  sales?.total >= 5000 ? 'rotate(-90deg)' : 'rotate(90deg)'
+                }
+                color={sales?.total >= 5000 ? 'green' : 'red.500'}
+                boxSize={4}
+              />
+            </Flex>
+            <Flex py={1} flexFlow="row wrap" w="full" gap={2}>
+              <Stack
+                direction="row"
+                align="center"
+                justify="left"
+                w="full"
+                spacing={1}
+              >
+                <Badge bg="nk_orange" color="nk_black" pt="2px" w="2rem">
+                  ❄️R
+                </Badge>
+                <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                <Badge bg="white" color="nk_black" pt="2px">
+                  {formatPrice(sales?.coldRegular)}
+                </Badge>
+              </Stack>
+              <Stack
+                direction="row"
+                align="center"
+                justify="left"
+                w="full"
+                spacing={1}
+              >
+                <Badge bg="nk_orange" color="nk_black" pt="2px" w="2rem">
+                  ❄️L
+                </Badge>
+                <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                <Badge bg="white" color="nk_black" pt="2px">
+                  {formatPrice(sales?.coldLarge)}
+                </Badge>
+              </Stack>
+              <Stack
+                direction="row"
+                align="center"
+                justify="left"
+                w="full"
+                spacing={1}
+              >
+                <Badge
+                  bg="nk_orange"
+                  color="nk_black"
+                  pt="2px"
+                  w="2rem"
+                  textAlign="center"
+                >
+                  🔥
+                </Badge>
+                <TriangleUpIcon transform="rotate(90deg)" boxSize={3} />
+                <Badge bg="white" color="nk_black" pt="2px">
+                  {formatPrice(sales?.hotRegular)}
+                </Badge>
+              </Stack>
+            </Flex>
+          </Box>
+        </SimpleGrid>
+        <Tabs variant="soft-rounded" size="md" align="center" h="full">
+          <TabList>
+            {cupTemp.map((temp, i) => (
+              <Tab
+                key={temp}
+                fontWeight="300"
+                _selected={{
+                  bg: i % 2 === 0 ? 'nk_orange' : 'nk_black',
+                  color: 'white',
+                }}
+              >
+                {temp}
+              </Tab>
+            ))}
+          </TabList>
+          <OrderProductChart cupsChartData={cupsChartData} />
+        </Tabs>
+        <Box position="absolute" bottom={5} right={5} zIndex={2} margin="auto">
+          <IconButton
+            colorScheme="orange"
+            bg="nk_orange"
+            aria-label="Select Date Range"
+            borderRadius={100}
+            icon={<TbReportSearch />}
+            animation={floatAnimation}
+            onClick={onOpen}
+          />
+        </Box>
+        <Drawer isOpen={isOpen} placement="top" onClose={onClose}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerHeader bg="nk_orange" color="white">
+              <Flex justify="space-between" align="center">
+                <Text letterSpacing={3}>GENERATE REPORT</Text>
+                <DrawerCloseButton position="unset" />
+              </Flex>
+            </DrawerHeader>
 
-          <DrawerFooter bg="nk_lightOrange" justifyContent="center">
-            <Button
-              colorScheme="orange"
-              bg="nk_orange"
-              fontWeight={500}
-              borderRadius={15}
-              isLoading={loader}
-              onClick={() => handleGenerateReport()}
-              isDisabled={!startDate && !endDate}
+            <DrawerBody
+              bg="nk_lightOrange"
+              as={Flex}
+              flexDir="column"
+              alignItems="center"
             >
-              {checkBoxStatus && reports ? (
-                <CSVLink {...reports}>GENERATE</CSVLink>
-              ) : (
-                'GENERATE'
-              )}
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </Box>
+              <Text as="b">Please select a date: </Text>
+              <Box>
+                <TableDatePicker onSelectedDateChange={handleDateChange} />
+              </Box>
+              <Checkbox
+                colorScheme="green"
+                mt={6}
+                onChange={(e) => setCheckBoxStatus(e.target.checked)}
+              >
+                <Text>Generate CSV</Text>
+              </Checkbox>
+            </DrawerBody>
+
+            <DrawerFooter bg="nk_lightOrange" justifyContent="center">
+              <Button
+                colorScheme="orange"
+                bg="nk_orange"
+                fontWeight={500}
+                borderRadius={15}
+                isLoading={loader}
+                onClick={() => handleGenerateReport()}
+                isDisabled={!startDate && !endDate}
+              >
+                {checkBoxStatus && reports ? (
+                  <CSVLink {...reports}>GENERATE</CSVLink>
+                ) : (
+                  'GENERATE'
+                )}
+              </Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </Box>
+    ) : (
+      <LoadingSpinner />
+    )
   ) : (
-    <LoadingSpinner />
+    <SecurityWrapper allowLogIn={handleLogIn} />
   );
 };
 
