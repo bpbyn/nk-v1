@@ -147,6 +147,8 @@ const Analytics: NextPageWithLayout = () => {
   const handleGenerateReport = () => {
     setDateRange({ startDate: startDate, endDate: endDate });
     setCheckBoxStatus(false);
+    setStartDate(null);
+    setEndDate(null);
   };
 
   const handleMakeCSV = (orders: OrderDetails[]) => {
